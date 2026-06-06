@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sound Classifier</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+        }
+
+        /* Header */
+        header {
+            background: #0f2c3c;
+            color: #d9e6ef;
+            padding: 18px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 22px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+            font-weight: 500;
+        }
+
+        nav a:hover {
+            color: #1abc9c;
+        }
+
+        /* Main Section */
+        .main-container {
+            min-height: calc(100vh - 90px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+        }
+
+        .card-custom {
+            width: 100%;
+            max-width: 520px;
+            background: #fff;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .card-custom h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #0f2c3c;
+        }
+
+        .btn-analyze {
+            width: 100%;
+            background: #4CAF50;
+            color: #fff;
+            font-weight: bold;
+            padding: 12px;
+            border-radius: 6px;
+            border: none;
+        }
+
+        .btn-analyze:hover {
+            background: #104212;
+        }
+
+        /* Result */
+        .result {
+            margin-top: 25px;
+            padding: 20px;
+            border-radius: 10px;
+            background: #eef7ee;
+            border-left: 5px solid #4CAF50;
+        }
+
+        .fault {
+            font-size: 18px;
+            font-weight: bold;
+            color: #b30000;
+        }
+
+        .confidence {
+            font-size: 16px;
+            margin-top: 5px;
+            color: #333;
+        }
+
+        .info {
+            margin-top: 15px;
+        }
+
+        .label {
+            font-weight: bold;
+            color: #0f2c3c;
+        }
+
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            nav {
+                margin-top: 10px;
+            }
+
+            nav a {
+                margin-left: 0;
+                margin-right: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <div class="d-flex align-items-center gap-2">
+        <img src="static/logo_2.png" alt="Vehicle Doctor Logo" style="height:50px;">
+        <h1>Vehicle Doctor</h1>
+    </div>
+
+    <nav>
+        <a href="http://127.0.0.1:5500/Booking-Project/src/main/in.html">Home</a>
+        <a href="http://127.0.0.1:5500/Booking-Project/src/main/reg.html">Register</a>
+        <a href="http://127.0.0.1:5500/Booking-Project/src/main/serviceindex.html">Services</a>
+        <a href="http://127.0.0.1:5500/Booking-Project/src/main/log.html">Login</a>
+    </nav>
+</header>
+
+<div class="main-container">
+    <div class="card-custom">
+
+        <h2>Sound Fault Classifier</h2>
+
+        <form method="POST" enctype="multipart/form-data">
+            <div class="mb-3">
+                <input type="file"
+                       class="form-control"
+                       name="audiofile"
+                       accept=".wav,.mp3"
+                       required>
+            </div>
+
+            <button type="submit" class="btn-analyze">
+                Analyze Audio
+            </button>
+        </form>
+
+        {% if prediction %}
+        <div class="result">
+            <div class="fault">
+                Detected Fault: {{ prediction }}
+            </div>
+
+            <div class="confidence">
+                Confidence: {{ confidence | round(2) }}%
+            </div>
+
+            <div class="info">
+                <p><span class="label">Cause:</span> {{ cause }}</p>
+                <p><span class="label">Repair Suggestion:</span> {{ repair }}</p>
+            </div>
+
+    </div>
+     <!-- NEXT PAGE BUTTON -->
+        <a href="http://127.0.0.1:5500/Booking-Project/src/main/index.html" class="btn btn-secondary w-100 mt-3">Proceed to Book Mechanic Page</a>
+        {% endif %}
+</div>
+
+</body>
+</html>

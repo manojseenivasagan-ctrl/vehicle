@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Customer Dashboard - Book Mechanic</title>
+<style>
+    body { margin:0; font-family:Arial,sans-serif; background:#f4f4f4; }
+    header { background:#2c3e50; color:white; display:flex; justify-content:space-between; align-items:center; padding:15px 40px; position:sticky; top:0; }
+    header h1 { margin:0; font-size:22px; }
+    nav a { color:white; text-decoration:none; margin-left:20px; font-weight:500; }
+    nav a:hover { color:#1abc9c; }
+
+    .welcome { text-align:center; font-size:22px; color:#2c3e50; margin:25px 0; font-weight:bold; }
+    .slogan { text-align:center; margin-bottom:20px; font-size:18px; color:#34495e; }
+
+    .container { display:flex; justify-content:center; flex-wrap:wrap; gap:30px; padding:20px; }
+    .box { background:rgb(211,188,134); border:2px solid black; border-radius:10px; width:300px; text-align:center; padding:30px 20px; transition:0.3s; }
+    .box:hover { transform:translateY(-8px); box-shadow:0 8px 20px rgba(0,0,0,0.2); }
+    .box img { width:150px; height:150px; object-fit:cover; border-radius:10px; margin-bottom:15px; }
+    .btn-link { display:inline-block; background:#4CAF50; color:white; padding:12px 20px; border-radius:6px; text-decoration:none; font-weight:bold; cursor:pointer; margin-top:10px; transition:0.3s; }
+    .btn-link:hover { background-color:#104212; }
+
+    .table-container { margin:20px auto; padding:20px; max-width:95%; background:white; border-radius:10px; box-shadow:0 4px 10px rgba(0,0,0,0.1); overflow-x:auto; }
+    table { width:100%; border-collapse:collapse; text-align:center; }
+    th, td { padding:12px; border:1px solid #ddd; }
+    th { background:#16a085; color:white; }
+    tr:nth-child(even) td { background:#f9f9f9; }
+    tr:hover td { background:#e8f8f5; }
+
+    @media (max-width:700px) {
+        .container { flex-direction:column; align-items:center; }
+    }
+</style>
+</head>
+<body>
+
+<header>
+    <div style="display:flex; align-items:center; gap:10px;">
+        <img src="logo1.png" alt="Book Mechanic Logo" style="height:50px;">
+        <h1>Book Mechanic</h1>
+    </div>
+    <nav>
+        <a href="cus_index.html">Home</a>
+        <a href="booking.html">Book Mechanic</a>
+        <a href="mechanicdetails.html">Mechanic Details</a>
+        <a href="#" id="logoutBtn">Logout</a>
+    </nav>
+</header>
+
+<div class="welcome" id="welcomeText">Welcome, Guest!</div>
+<div class="slogan">
+    <p>Book a Mechanic. Maintain Your Vehicle. Drive with Confidence!</p>
+</div>
+
+<!-- Customer Dashboard Boxes -->
+<div class="container">
+    <div class="box">
+        <img src="customer.jpg" alt="Customer Image">
+        <h2>Book Mechanic</h2>
+        <a href="booking.html" class="btn-link">Go to Mechanic Booking</a>
+    </div>
+
+    <div class="box">
+        <img src="mechanic.png" alt="Mechanic Image">
+        <h2>Mechanic Details</h2>
+        <a href="mechanicdetails.html" class="btn-link">View Mechanic Details</a>
+    </div>
+
+    <div class="box">
+        <img src="history.jpg" alt="Booking History Image">
+        <h2>Booking History</h2>
+        <a href="bookinghistory.html" class="btn-link">View Booking History</a>
+    </div>
+</div>
+
+<!-- Customer Bookings Table -->
+<div class="table-container">
+    <h2>Your Bookings</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th><th>Email</th><th>Mobile</th><th>Address</th><th>City</th>
+                <th>Vehicle</th><th>Service Details</th><th>Date</th><th>Time</th>
+                <th>Shop Name</th><th>Shop Email</th><th>Mechanic Name</th><th>Mechanic Mobile</th>
+            </tr>
+        </thead>
+        <tbody id="confirmedbookingdetails">
+            <tr><td colspan="12">Loading bookings...</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<script>
+window.onload = function(){
+    const customerName = localStorage.getItem("customerName") || "Guest";
+    const customerEmail = localStorage.getItem("customerEmail");
+
+    document.getElementById("welcomeText").textContent = `Welcome, ${customerName}!`;
+
+    if(!customerEmail){
+        alert("Please log in first!");
+        window.location.href = "login.html";
+        return;
+    }
+
+    // Fetch only this customer's bookings
+    fetch(`http://localhost:8080/ConfirmBooking/list/${customerEmail}`)
+    .then(res => res.json())
+    .then(bookings => {
+        const tbody = document.getElementById("confirmedbookingdetails");
+        tbody.innerHTML = "";
+        if(bookings.length===0){
+            tbody.innerHTML = "<tr><td colspan='12'>No bookings found.</td></tr>";
+            return;
+        }
+        bookings.forEach(b => {
+    tbody.innerHTML += `
+        <tr>
+            <td>${b.name}</td>
+            <td>${b.emailId}</td>
+            <td>${b.mobileno}</td>
+            <td>${b.address}</td>
+            <td>${b.city}</td>
+            <td>${b.vehicleName}</td>
+            <td>${b.servicedetails}</td>
+            <td>${b.servicedate}</td>
+            <td>${b.servicetime}</td>
+            <td>${b.shopname}</td>
+            <td>${b.shopemailId}</td>
+            <td>${b.mechanicname}</td>
+            <td>${b.mechanicmobileno}</td>
+        </tr>`;
+});
+
+    })
+    .catch(err => console.error("Error fetching bookings:", err));
+
+    document.getElementById("logoutBtn").addEventListener("click",()=>{
+        localStorage.clear();
+        window.location.href = "login.html";
+    });
+};
+</script>
+
+</body>
+</html>

@@ -1,0 +1,12 @@
+{
+	"folders": [
+		{
+			"name": "Booking Project",
+			"path": "."
+		}
+	],
+	"settings": {
+		"java.compile.nullAnalysis.mode": "automatic",
+		"python-envs.defaultEnvManager": "ms-python.python:system"
+	}
+}

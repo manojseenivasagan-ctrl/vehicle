@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Advanced Car Sensor Dashboard</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    color: white;
+}
+
+header {
+    text-align: center;
+    padding: 18px;
+    font-size: 28px;
+    font-weight: bold;
+    background: rgba(0,0,0,0.3);
+}
+
+.container {
+    width: 92%;
+    margin: 20px auto;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+
+.sensor-card {
+    background: rgba(255,255,255,0.1);
+    padding: 20px;
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 0 20px rgba(0,0,0,0.3);
+    text-align: center;
+    transition: 0.3s;
+    border-left: 6px solid #fff;
+}
+
+.sensor-card:hover {
+    transform: scale(1.05);
+}
+
+.title {
+    font-size: 16px;
+    opacity: 0.8;
+}
+
+.value {
+    font-size: 34px;
+    font-weight: bold;
+}
+
+.red { border-left-color: #ff4a4a; }
+.green { border-left-color: #4aff8c; }
+.blue { border-left-color: #4ac8ff; }
+.orange { border-left-color: #ff9f43; }
+.yellow { border-left-color: #ffe043; }
+.purple { border-left-color: #c084fc; }
+.pink { border-left-color: #ff4fd8; }
+.teal { border-left-color: #20ffe0; }
+
+/* Alert Section */
+#alert-box {
+    margin-top: 25px;
+    padding: 15px;
+    background: rgba(255,0,0,0.2);
+    border-radius: 10px;
+    font-size: 20px;
+    text-align: center;
+}
+
+/* Diagnosis */
+#diagnosis {
+    margin-top: 20px;
+    padding: 20px;
+    background: rgba(0,0,0,0.35);
+    border-radius: 12px;
+}
+
+#diagnosis h3 {
+    margin-top: 0;
+    color: #ffe043;
+}
+
+.fault {
+    margin-bottom: 15px;
+    padding: 10px;
+    border-left: 5px solid red;
+    background: rgba(255,255,255,0.05);
+}
+</style>
+</head>
+
+<body>
+
+<header>⚡ Advanced Car Live Sensor Dashboard</header>
+
+<div class="container">
+
+<div class="grid">
+    <div class="sensor-card red"><div class="title">Engine RPM</div><div id="rpm" class="value">--</div></div>
+    <div class="sensor-card green"><div class="title">Speed (km/h)</div><div id="speed" class="value">--</div></div>
+    <div class="sensor-card orange"><div class="title">Coolant Temp (°C)</div><div id="coolant" class="value">--</div></div>
+    <div class="sensor-card blue"><div class="title">Battery Voltage (V)</div><div id="battery" class="value">--</div></div>
+    <div class="sensor-card yellow"><div class="title">Fuel Level (%)</div><div id="fuel" class="value">--</div></div>
+    <div class="sensor-card purple"><div class="title">Oil Pressure (psi)</div><div id="oil" class="value">--</div></div>
+    <div class="sensor-card pink"><div class="title">Engine Load (%)</div><div id="load" class="value">--</div></div>
+    <div class="sensor-card teal"><div class="title">Air Intake Temp (°C)</div><div id="iat" class="value">--</div></div>
+</div>
+
+<div id="alert-box">Loading...</div>
+
+<div id="diagnosis">
+    <h3>🔍 Fault Diagnosis (Cause & Resolution)</h3>
+    <div id="fault-details">Monitoring system health...</div>
+</div>
+
+</div>
+
+<script>
+const token = "TUoPehi6qlx9QDeCOs0OlJxbeWQF84_f";
+
+async function fetchData() {
+    try {
+        const url = `https://blynk.cloud/external/api/get?token=${token}&V0&V1&V2&V3&V4&V5&V6&V7`;
+        const res = await fetch(url);
+        const d = await res.json();
+
+        const rpm = +d.V0;
+        const speed = +d.V1;
+        const coolant = +d.V2;
+        const battery = +d.V3;
+        const fuel = +d.V4;
+        const oil = +d.V5;
+        const load = +d.V6;
+        const iat = +d.V7;
+
+        rpmEl(rpm); speedEl(speed); coolantEl(coolant);
+        batteryEl(battery); fuelEl(fuel); oilEl(oil);
+        loadEl(load); iatEl(iat);
+
+        let alerts = [];
+        let faults = [];
+
+        if (coolant > 95) {
+            alerts.push("🔥 Coolant Temperature HIGH");
+            faults.push(faultUI(
+                "High Coolant Temperature",
+                "Low coolant, radiator fan failure, blocked radiator",
+                "Refill coolant, check fan, clean radiator"
+            ));
+        }
+
+        if (battery < 12) {
+            alerts.push("🔋 Battery Voltage LOW");
+            faults.push(faultUI(
+                "Low Battery Voltage",
+                "Weak battery, alternator failure, loose terminals",
+                "Recharge/replace battery, inspect alternator"
+            ));
+        }
+
+        if (speed > 120) {
+            alerts.push("⚠ Overspeed Warning");
+            faults.push(faultUI(
+                "Overspeed Condition",
+                "Aggressive driving, downhill speed",
+                "Reduce speed, follow traffic limits"
+            ));
+        }
+
+        if (fuel < 15) {
+            alerts.push("⛽ Low Fuel Level");
+            faults.push(faultUI(
+                "Low Fuel",
+                "Fuel tank nearly empty",
+                "Refuel immediately"
+            ));
+        }
+
+        if (oil < 25) {
+            alerts.push("🛢 Low Oil Pressure");
+            faults.push(faultUI(
+                "Low Oil Pressure",
+                "Low oil level, oil pump failure",
+                "Stop engine, refill oil, inspect pump"
+            ));
+        }
+
+        document.getElementById("alert-box").innerHTML =
+            alerts.length ? alerts.join("<br>") : "✔ All Systems Normal";
+
+        document.getElementById("fault-details").innerHTML =
+            faults.length ? faults.join("") : "✔ No faults detected. Vehicle operating normally.";
+
+    } catch {
+        document.getElementById("alert-box").innerHTML = "❌ Error Fetching Data";
+    }
+}
+
+function faultUI(title, cause, fix) {
+    return `
+        <div class="fault">
+            <strong>${title}</strong><br>
+            <b>Cause:</b> ${cause}<br>
+            <b>Resolution:</b> ${fix}
+        </div>`;
+}
+
+// UI update helpers
+const rpmEl=v=>rpm.innerText=v;
+const speedEl=v=>speed.innerText=v;
+const coolantEl=v=>coolant.innerText=v;
+const batteryEl=v=>battery.innerText=v;
+const fuelEl=v=>fuel.innerText=v+"%";
+const oilEl=v=>oil.innerText=v;
+const loadEl=v=>load.innerText=v+"%";
+const iatEl=v=>iat.innerText=v;
+
+setInterval(fetchData, 2000);
+fetchData();
+</script>
+
+</body>
+</html>

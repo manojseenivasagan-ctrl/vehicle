@@ -1,0 +1,51 @@
+Damage Type: repairable
+
+Cause:
+Minor accident, surface scratches, bumper dents, paint damage.
+
+Repair Procedure:
+1. Inspect damaged area.
+2. Remove dents if required.
+3. Apply body filler.
+4. Sand and repaint.
+5. Perform final quality inspection.
+
+Estimated Cost:
+₹1,000 - ₹15,000
+
+Repair Time:
+2 Hours - 2 Days
+
+Severity:
+Low
+
+Maintenance Tips:
+Avoid water exposure for 24 hours after repainting.
+Inspect surrounding panels for hidden damage.
+
+===================================================
+
+Damage Type: replaceable
+
+Cause:
+Major collision, structural damage, cracked bumper, broken panels.
+
+Repair Procedure:
+1. Inspect damaged component.
+2. Remove damaged part.
+3. Install OEM replacement.
+4. Paint and align component.
+5. Perform safety inspection.
+
+Estimated Cost:
+₹10,000 - ₹1,00,000+
+
+Repair Time:
+1 Day - 7 Days
+
+Severity:
+High
+
+Maintenance Tips:
+Perform wheel alignment check.
+Inspect chassis and suspension components.

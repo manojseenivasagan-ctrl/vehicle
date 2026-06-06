@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Vehicle Accident History</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f4f6f9;
+    }
+    header {
+      background-color: #2c3e50;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 40px;
+    }
+    header h1 { margin: 0; font-size: 22px; }
+    nav a { color: white; text-decoration: none; margin-left: 20px; }
+    nav a:hover { color: #1abc9c; }
+
+    #welcome { text-align: center; margin: 20px 0; font-size: 22px; color: #2c3e50; }
+
+    #logoutBtn {
+      display: block;
+      margin: 0 auto 20px auto;
+      padding: 10px 20px;
+      background-color: #e74c3c;
+      color: white;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .table-container {
+      max-width: 95%;
+      margin: 20px auto 50px auto;
+      background-color: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    #addBtn {
+      background-color: #16a085;
+      color: white;
+      padding: 10px 18px;
+      border: none;
+      border-radius: 6px;
+      font-size: 15px;
+      cursor: pointer;
+      margin-bottom: 15px;
+    }
+
+    #addBtn:hover { background-color: #138d75; }
+
+    table { width: 100%; border-collapse: collapse; text-align: center; }
+    th, td { padding: 12px; border: 1px solid #ddd; }
+    th { background-color: #16a085; color: white; }
+    tr:nth-child(even) td { background-color: #f9f9f9; }
+    tr:hover td { background-color: #e8f8f5; }
+
+    #searchBar {
+      width: 98%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+
+    /* ---------- Modal Styles ---------- */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      padding-top: 100px;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(0,0,0,0.4);
+    }
+
+    .modal-content {
+      background-color: #fff;
+      margin: auto;
+      padding: 20px;
+      border-radius: 10px;
+      width: 40%;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+
+    .modal input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    .modal button {
+      padding: 10px 20px;
+      margin-top: 15px;
+      cursor: pointer;
+      border: none;
+      border-radius: 6px;
+    }
+
+    #saveAccident { background-color: #27ae60; color: white; }
+    #closeModal { background-color: #c0392b; color: white; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div style="display:flex; align-items:center; gap:10px;">
+    <img src="logo_2.png" alt="Vehicle Doctor Logo" style="height:50px;">
+    <h1 style="margin:0; font-size:22px;">Vehicle Doctor</h1>
+  </div>
+  <nav>
+    <a href="in.html">Home</a>
+    <a href="reg.html">Register</a>
+    <a href="serviceindex.html">Services List</a>
+    <a href="log.html">Login</a>
+  </nav>
+</header>
+
+<div id="welcome">Welcome..!</div>
+<button id="logoutBtn">Logout</button>
+
+<div class="table-container">
+
+  <h2 style="text-align:center; color:#16a085;">Your Vehicle Accident Details</h2>
+
+  <button id="addBtn">+ Add Accident Details</button>
+
+  <input type="text" id="searchBar" onkeyup="searchBookings()" placeholder="Search...">
+
+  <table>
+    <thead>
+      <tr>
+        <th>Vehicle Register Number</th>
+        <th>Vehicle Insurance</th>
+        <th>Accident FIR Details</th>
+        <th>Accident Location</th>
+        <th>Accident Date</th>
+        <th>Accident Time</th>
+      </tr>
+    </thead>
+    <tbody id="accidentTable">
+      <tr><td colspan="6">Loading accident details...</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ---------- Modal (Popup Form) ---------- -->
+<div id="accidentModal" class="modal">
+  <div class="modal-content">
+    <h3>Add Accident Details</h3>
+
+    <label>Insurance</label>
+    <input type="text" id="insurance">
+
+    <label>FIR Details</label>
+    <input type="text" id="fir">
+
+    <label>Accident Location</label>
+    <input type="text" id="location">
+
+    <label>Accident Date</label>
+    <input type="date" id="accdate">
+
+    <label>Accident Time</label>
+    <input type="time" id="acctime">
+
+    <button id="saveAccident">Save</button>
+    <button id="closeModal">Close</button>
+  </div>
+</div>
+
+<script>
+window.onload = function() {
+  const customerName = localStorage.getItem("customerName");
+  const regNum = localStorage.getItem("customerregisternum");
+
+  if (!regNum) {
+    alert("Vehicle number not found! Please login again.");
+    window.location.href = "log.html";
+    return;
+  }
+
+  document.getElementById("welcome").textContent = `Welcome, ${customerName || "User"}!`;
+
+  loadAccidentData(regNum);
+
+  document.getElementById("logoutBtn").onclick = function() {
+    localStorage.clear();
+    window.location.href = "log.html";
+  };
+
+  // Open modal
+  document.getElementById("addBtn").onclick = function() {
+    document.getElementById("accidentModal").style.display = "block";
+  };
+
+  // Close modal
+  document.getElementById("closeModal").onclick = function() {
+    document.getElementById("accidentModal").style.display = "none";
+  };
+
+  // Save accident
+  document.getElementById("saveAccident").onclick = async function () {
+    const insurance = document.getElementById("insurance").value;
+    const fir = document.getElementById("fir").value;
+    const location = document.getElementById("location").value;
+    const accidentdate = document.getElementById("accdate").value;
+    const accidenttime = document.getElementById("acctime").value;
+
+    if (!insurance || !fir || !location || !accidentdate || !accidenttime) {
+      alert("Please fill all fields!");
+      return;
+    }
+
+    await fetch("http://localhost:8080/Vehicle/Accident/Register", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: `registernum=${regNum}&Insurance=${insurance}&FIR=${fir}&location=${location}&accidentdate=${accidentdate}&accidenttime=${accidenttime}`
+    });
+
+    alert("Accident details added successfully!");
+
+    // Close modal
+    document.getElementById("accidentModal").style.display = "none";
+
+    // Reload data
+    loadAccidentData(regNum);
+  };
+};
+
+// Load accident data
+function loadAccidentData(regNum) {
+  fetch(`http://localhost:8080/Vehicle/Accident/list/${regNum}`)
+    .then(response => response.json())
+    .then(data => {
+      const tbody = document.getElementById("accidentTable");
+      tbody.innerHTML = "";
+
+      if (!data.length) {
+        tbody.innerHTML = `<tr><td colspan="6" style="color:red;">No Accident Details found.</td></tr>`;
+        return;
+      }
+
+      data.forEach(a => {
+        tbody.innerHTML += `
+          <tr>
+            <td>${a.registernum}</td>
+            <td>${a.insurance}</td>
+            <td>${a.fir}</td>
+            <td>${a.location}</td>
+            <td>${a.accidentdate}</td>
+            <td>${a.accidenttime}</td>
+          </tr>`;
+      });
+    });
+}
+
+function searchBookings() {
+  const input = document.getElementById("searchBar").value.toLowerCase();
+  const rows = document.querySelectorAll("#accidentTable tr");
+
+  rows.forEach(row => {
+    row.style.display = row.textContent.toLowerCase().includes(input) ? "" : "none";
+  });
+}
+</script>
+
+</body>
+</html>

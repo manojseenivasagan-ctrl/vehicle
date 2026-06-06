@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Doctor | Image Damage Detection</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+        }
+
+        /* Header */
+
+        header {
+            background: #0f2c3c;
+            color: #d9e6ef;
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        header img {
+            height: 50px;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 22px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+            font-weight: 500;
+        }
+
+        nav a:hover {
+            color: #1abc9c;
+        }
+
+        /* Main */
+
+        .main-wrapper {
+            min-height: calc(100vh - 90px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 30px 15px;
+        }
+
+        .card-box {
+            width: 100%;
+            max-width: 700px;
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .card-box h2 {
+            text-align: center;
+            color: #0f2c3c;
+            margin-bottom: 25px;
+        }
+
+        .btn-primary {
+            width: 100%;
+            font-weight: bold;
+        }
+
+        /* Result Section */
+
+        .result-box {
+            margin-top: 25px;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .repairable {
+            background: #eafaf1;
+            border-left: 6px solid #28a745;
+        }
+
+        .replaceable {
+            background: #fdecea;
+            border-left: 6px solid #dc3545;
+        }
+
+        .label {
+            font-weight: bold;
+            color: #0f2c3c;
+        }
+
+        .uploaded-image {
+            max-width: 100%;
+            max-height: 350px;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            margin-top: 15px;
+        }
+
+        .repair-details {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            white-space: pre-wrap;
+            font-size: 14px;
+            margin-top: 15px;
+        }
+
+        .book-btn {
+            margin-top: 15px;
+        }
+
+        @media(max-width:768px){
+
+            header{
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            nav{
+                margin-top:10px;
+            }
+
+            nav a{
+                margin-left:0;
+                margin-right:15px;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+
+<header>
+
+    <div class="d-flex align-items-center gap-2">
+
+        <img
+            src="{{ url_for('static', filename='logo_2.png') }}"
+            alt="Vehicle Doctor Logo"
+        >
+
+        <h1>Vehicle Doctor</h1>
+
+    </div>
+
+    <nav>
+        <a href="http://127.0.0.1:5500/Booking-Project/src/main/in.html">Home</a>
+        <a href="http://127.0.0.1:5500/Booking-Project/src/main/reg.html">Register</a>
+        <a href="http://127.0.0.1:5500/Booking-Project/src/main/serviceindex.html">Services</a>
+        <a href="http://127.0.0.1:5500/Booking-Project/src/main/log.html">Login</a>
+    </nav>
+
+</header>
+
+<!-- MAIN CONTENT -->
+
+<div class="main-wrapper">
+
+    <div class="card-box">
+
+        <h2>Vehicle Damage Detection</h2>
+
+        <!-- Upload Form -->
+
+        <form method="POST" enctype="multipart/form-data">
+
+            <div class="mb-3">
+
+                <input
+                    type="file"
+                    class="form-control"
+                    name="imagefile"
+                    accept=".jpg,.jpeg,.png"
+                    required
+                >
+
+            </div>
+
+            <button
+                type="submit"
+                class="btn btn-primary"
+            >
+                Analyze Damage
+            </button>
+
+        </form>
+
+        <!-- Results -->
+
+        {% if prediction %}
+
+        <div class="result-box
+
+            {% if 'repairable' in prediction.lower() %}
+                repairable
+            {% else %}
+                replaceable
+            {% endif %}
+        ">
+
+            <h4 class="mb-3">
+                Detection Result
+            </h4>
+
+            <p>
+                <span class="label">
+                    Detected Type:
+                </span>
+                {{ prediction }}
+            </p>
+
+            <p>
+                <span class="label">
+                    Confidence:
+                </span>
+                {{ confidence }}
+            </p>
+
+            {% if image_url %}
+
+            <div class="text-center">
+
+
+            </div>
+
+            {% endif %}
+
+            <hr>
+
+            <h5>
+                AI Repair Recommendation
+            </h5>
+
+            <div class="repair-details">
+{{ repair }}
+            </div>
+
+        </div>
+
+        <!-- Booking Button -->
+
+        <a
+            href="http://127.0.0.1:5500/Booking-Project/src/main/cus_index.html"
+            class="btn btn-secondary w-100 book-btn"
+        >
+            Proceed to Book Mechanic
+        </a>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register Page</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+        }
+
+        /* Header / Navigation */
+        header {
+            background-color: #2c3e50;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 40px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 22px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+            font-weight: 500;
+            transition: 0.3s;
+        }
+
+        nav a:hover {
+            color: #1abc9c;
+        }
+
+        /* Slogan */
+        .slogan {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 20px;
+            color: #34495e;
+        }
+
+        /* Register Boxes */
+        .container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            flex-wrap: wrap;
+            padding: 20px;
+        }
+
+        .box {
+            background-color: rgb(211, 188, 134);
+            border: 2px solid black;
+            border-radius: 10px;
+            width: 300px;
+            text-align: center;
+            padding: 30px;
+            margin: 20px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+
+        .box img {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            color: rgb(156, 98, 16);
+            margin-bottom: 20px;
+        }
+
+        .btn-link {
+            display: inline-block;
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            font-weight: bold;
+            font-size: medium;
+            border-radius: 6px;
+            text-align: center;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: 0.3s;
+        }
+
+        .btn-link:hover {
+            background-color: #104212;
+        }
+
+        .extra-links {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 14px;
+        }
+
+        .extra-links a {
+            text-decoration: none;
+            color: #104212;
+            font-weight: bold;
+        }
+
+        .extra-links a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 700px) {
+            .container {
+                flex-direction: column;
+            }
+
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            nav a {
+                margin-left: 0;
+                margin-right: 15px;
+                margin-top: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header / Navigation -->
+    <header>
+        <div style="display:flex; align-items:center; gap:10px;">
+    <img src="logo1.png" alt="Book Mechanic Logo" style="height:50px;">
+    <h1 style="margin:0; font-size:22px;">Book Mechanic</h1>
+  </div>
+        <nav>
+      <a href="shopin.html">Home</a>
+      <a href="shopregister.html">Register</a>
+      <a href="serviceindex.html">Services List</a>
+      <a href="shoplogin.html">Login</a>
+        </nav>
+    </header>
+
+    <!-- Slogan -->
+    <div class="slogan">
+        <p>Connect with us. Choose Service. Book Slot!.</p>
+    </div>
+
+    <!-- Register Boxes -->
+    <div class="container">
+        <!-- Book Mechanic -->
+        <div class="box">
+            <img src="customer.jpg" alt="Customer Image">
+            <h2>Two-wheeler Services</h2>
+            <a href="bikeservice.html" class="btn-link">Go to Two-wheeler Services List</a>
+        </div>
+
+        <!-- Mechanic Details -->
+        <div class="box">
+            <img src="mechanic.png" alt="Shop Image">
+            <h2>Four-Wheeler Services</h2>
+            <a href="carservice.html" class="btn-link">Go to Four-wheeler Services List</a>
+        </div>
+</body>
+</html>

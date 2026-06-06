@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Mechanic Booking Service</title>
+    <style>
+        body {
+            background-color: #f4f6f9;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #2c3e50;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 40px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 22px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+            font-weight: 500;
+            transition: 0.3s;
+        }
+
+        nav a:hover {
+            color: #1abc9c;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 50px auto;
+            background: #e5d4c4;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 26px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-top: 12px;
+            font-weight: 600;
+            color: #34495e;
+        }
+
+        input, select, button {
+            padding: 12px 10px;
+            margin-top: 6px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        input:focus, select:focus {
+            border-color: #1abc9c;
+            box-shadow: 0 0 5px rgba(26, 188, 156, 0.3);
+        }
+
+        button {
+            background-color: #1abc9c;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            margin-top: 25px;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background-color: #16a085;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div style="display:flex; align-items:center; gap:10px;">
+            <img src="logo1.png" alt="Book Mechanic Logo" style="height:50px;">
+            <h1>Book Mechanic</h1>
+        </div>
+        <nav>
+            <a href="shopin.html">Home</a>
+            <a href="shopregister.html">Register</a>
+            <a href="serviceindex.html">Services List</a>
+            <a href="shoplogin.html">Login</a>
+        </nav>
+    </header>
+
+    <!-- Customer Confirmation Form -->
+<div class="container">
+    <h2>Customer Confirmation</h2>
+
+    <form id="confirmbooking">
+        <!-- Hidden ID -->
+        <input type="hidden" id="bookingId" name="id">
+
+        <!-- Existing fields -->
+        <label for="name">Full Name:</label>
+        <input type="text" id="name" name="name" required readonly>
+
+        <label for="mobileno">Mobile Number:</label>
+        <input type="text" id="mobileno" name="mobileno" required readonly>
+
+        <label for="email">Email ID:</label>
+        <input type="email" id="email" name="emailId" required readonly>
+
+        <label for="city">City:</label>
+        <input type="text" id="city" name="city" required readonly>
+
+        <label for="address">Address:</label>
+        <input type="text" id="address" name="address" required readonly>
+
+        <label for="pincode">Pin Code:</label>
+        <input type="text" id="pincode" name="pincode" required readonly>
+
+        <label for="vehicle">Vehicle Type:</label>
+        <input type="text" id="vehicle" name="VehicleName" required readonly>
+
+        <label for="vehiclemodel">Vehicle Model:</label>
+        <input type="text" id="vehiclemodel" name="vehiclemodel" required readonly>
+
+        <label for="service">Service Details:</label>
+        <input type="text" id="service" name="servicedetails" required readonly>
+
+        <label for="bookingdate">Booking Date:</label>
+        <input type="date" id="bookingdate" name="servicedate" required readonly>
+
+        <label for="bookingtime">Booking Time:</label>
+        <input type="time" id="bookingtime" name="servicetime" required readonly>
+
+        <label for="shopname">Shop Name:</label>
+        <input type="text" id="shopname" name="shopname" placeholder="shopname" required>
+
+        <label for="shopemail">Shop Email ID:</label>
+        <input type="email" id="shopemailId" name="shopemailId" required>
+
+        <label for="mechanicname">Mechanic Name:</label>
+        <input type="text" id="mechanicname" name="mechanicname" placeholder="mechanicname" required>
+
+        <label for="mechanicmobileno">Mechanic Mobile No:</label>
+        <input type="text" id="mechanicmobileno" name="mechanicmobileno" placeholder="mechanicmobileno" required>
+
+        <input type="hidden" id="status" name="status" value="Not Submitted">
+
+        <button type="submit">Book</button>
+    </form>
+</div>
+
+<script>
+window.onload = function() {
+    const customerData = localStorage.getItem("selectedCustomer");
+    if (!customerData) {
+        alert("No customer selected! Redirecting...");
+        window.location.href = "customerslist.html";
+        return;
+    }
+
+    const customer = JSON.parse(decodeURIComponent(customerData));
+
+    // ✅ Fill data
+    document.getElementById("bookingId").value = customer.id || "";
+    document.getElementById("name").value = customer.name || "";
+    document.getElementById("mobileno").value = customer.mobileno || "";
+    document.getElementById("email").value = customer.emailId || "";
+    document.getElementById("city").value = customer.city || "";
+    document.getElementById("address").value = customer.address || "";
+    document.getElementById("pincode").value = customer.pincode || "";
+    document.getElementById("vehicle").value = customer.vehicleName || "";
+    document.getElementById("vehiclemodel").value = customer.vehiclemodel || "";
+    document.getElementById("service").value = customer.servicedetails || "";
+    document.getElementById("bookingdate").value = customer.servicedate || "";
+    document.getElementById("bookingtime").value = customer.servicetime || "";
+};
+
+document.getElementById("confirmbooking").addEventListener("submit", async function(event) {
+    event.preventDefault();
+
+    const formData = new FormData(this);
+    const bookingId = document.getElementById("bookingId").value;
+
+    try {
+        // Step 1: Confirm booking
+        const confirmResponse = await fetch("http://localhost:8080/ConfirmBooking", {
+            method: "POST",
+            body: formData
+        });
+
+        if (confirmResponse.ok) {
+            // Step 2: Update booking status with ID
+            const updateResponse = await fetch("http://localhost:8080/Booking/update", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: new URLSearchParams({
+                    id: bookingId,
+                    status: "Confirmed"
+                })
+            });
+
+            if (updateResponse.ok) {
+                alert("✅ Booking confirmed and status updated successfully!");
+                window.location.href = "customerslist.html";
+            } else {
+                alert("❌ Booking confirmed but status update failed.");
+            }
+        } else {
+            alert("❌ Failed to confirm booking.");
+        }
+    } catch (error) {
+        console.error(error);
+        alert("❌ Server not responding.");
+    }
+});
+</script>
+</body>
+</html>

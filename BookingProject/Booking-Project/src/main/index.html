@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Book Mechanic Page</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f4f6f9;
+      color: #333;
+    }
+
+    /* Header */
+    header {
+      background: #2c3e50;
+      color: white;
+      padding: 15px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 24px;
+      letter-spacing: 0px;
+    }
+    nav a {
+      color: white;
+      text-decoration: none;
+      margin-left: 20px;
+      font-weight: 500;
+      transition: 0.3s;
+    }
+    nav a:hover {
+      color: #1abc9c;
+    }
+
+    /* Hero Section */
+    .hero {
+      background: linear-gradient(to right, #1abc9c, #16a085);
+      color: white;
+      text-align: center;
+      padding: 100px 20px;
+    }
+    .hero h2 {
+      font-size: 42px;
+      margin-bottom: 15px;
+    }
+    .hero p {
+      font-size: 18px;
+      margin-bottom: 30px;
+    }
+    .hero button {
+      background: white;
+      color: #16a085;
+      padding: 12px 25px;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .hero button:hover {
+      background: #f1f1f1;
+    }
+
+    /* Features */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      padding: 60px 40px;
+      max-width: 1200px;
+      margin: auto;
+    }
+    .card {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      transition: 0.3s;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+    }
+    .card h3 {
+      margin-bottom: 15px;
+      color: #16a085;
+    }
+
+    /* Footer */
+    footer {
+      background: #2c3e50;
+      color: white;
+      margin-top: 40px;
+    }
+
+    .footer-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      padding: 40px;
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    .footer-section h3 {
+      margin-bottom: 15px;
+      color: #1abc9c;
+    }
+
+    .footer-section p, 
+    .footer-section a {
+      font-size: 14px;
+      color: #ddd;
+      text-decoration: none;
+      line-height: 1.6;
+    }
+
+    .footer-section a:hover {
+      color: #1abc9c;
+    }
+
+    .footer-section ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .footer-section ul li {
+      margin-bottom: 10px;
+    }
+
+    .social-icons a {
+      font-size: 20px;
+      margin-right: 10px;
+      color: white;
+      transition: 0.3s;
+    }
+
+    .social-icons a:hover {
+      color: #1abc9c;
+    }
+
+    .footer-bottom {
+      text-align: center;
+      padding: 15px;
+      background: #1f2d3d;
+      font-size: 14px;
+    }
+
+
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div style="display:flex; align-items:center; gap:10px;">
+    <img src="logo1.png" alt="Book Mechanic Logo" style="height:50px;">
+    <h1 style="margin:0; font-size:22px;">Book Mechanic</h1>
+  </div>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="register.html">Register</a>
+      <a href="serviceindex.html">Services List</a>
+      <a href="loginindex.html">Login</a>
+    </nav>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <h2>Welcome to Book Mechanic Homepage</h2>
+    <p>Smooth Rides Start with Smart Care.</p>
+    <button onclick="window.location.href='service.html'">Explore Service</button>
+  </section>
+
+  <!-- Features -->
+  <section class="features">
+    <div class="card">
+      <h3>🏍️ Two Wheeler Care</h3>
+      <p>Reliable servicing to ensure your bike stays safe and road-ready.</p>
+    </div>
+    <div class="card">
+      <h3>🚗 Four Wheeler Care</h3>
+      <p>From quick checkups to major repairs — your car is in trusted hands.</p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-container">
+      <div class="footer-section">
+        <h3>About Us</h3>
+        <p>We make vehicle care simple — book your mechanic in just a few clicks.</p>
+      </div>
+
+      <div class="footer-section">
+        <h3>Quick Links</h3>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="loginindex.html">Login</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-section">
+        <h3>Contact</h3>
+        <p>Email: bookmechanic@gmail.com</p>
+        <p>Phone: +91 98765 43210</p>
+      </div>
+
+      <div class="footer-section">
+        <h3>Follow Us</h3>
+        <div class="social-icons">
+          <a href="#">🌐</a>
+          <a href="#">📘</a>
+          <a href="#">🐦</a>
+          <a href="#">📸</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 My Website | All Rights Reserved</p>
+    </div>
+  </footer>
+
+</body>
+</html>

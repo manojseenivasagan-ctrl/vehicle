@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Vehicle Repair History</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f4f6f9;
+    }
+
+    header {
+      background-color: #2c3e50;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 40px;
+    }
+    header h1 { margin: 0; font-size: 22px; }
+    nav a { color: white; text-decoration: none; margin-left: 20px; }
+    nav a:hover { color: #1abc9c; }
+
+    #welcome {
+      text-align: center;
+      margin: 20px 0;
+      font-size: 22px;
+      color: #2c3e50;
+    }
+
+    #logoutBtn {
+      display: block;
+      margin: 0 auto 20px auto;
+      padding: 10px 20px;
+      background-color: #e74c3c;
+      color: white;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .table-container {
+      max-width: 95%;
+      margin: 20px auto 50px auto;
+      background-color: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    #addBtn {
+      background-color: #16a085;
+      color: white;
+      padding: 10px 18px;
+      border: none;
+      border-radius: 6px;
+      font-size: 15px;
+      cursor: pointer;
+      margin-bottom: 15px;
+    }
+    #addBtn:hover { background-color: #138d75; }
+
+    table { width: 100%; border-collapse: collapse; text-align: center; }
+    th, td { padding: 12px; border: 1px solid #ddd; }
+    th { background-color: #16a085; color: white; }
+
+    tr:nth-child(even) td { background-color: #f9f9f9; }
+    tr:hover td { background-color: #e8f8f5; }
+
+    #searchBar {
+      width: 98%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+
+    /* ---------- Modal ---------- */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
+    }
+
+    .modal-content {
+      background: #fff;
+      width: 45%;
+      margin: 80px auto;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+
+    .modal input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      margin-bottom: 12px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    .modal button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    #saveRepair { background-color: #27ae60; color: white; }
+    #closeModal { background-color: #c0392b; color: white; }
+
+  </style>
+</head>
+<body>
+
+<header>
+  <div style="display:flex; align-items:center; gap:10px;">
+    <img src="logo_2.png" alt="Vehicle Doctor Logo" style="height:50px;">
+    <h1>Vehicle Doctor</h1>
+  </div>
+  <nav>
+    <a href="in.html">Home</a>
+    <a href="reg.html">Register</a>
+    <a href="ser.html">Services List</a>
+    <a href="log.html">Login</a>
+  </nav>
+</header>
+
+<div id="welcome">Welcome..!</div>
+<button id="logoutBtn">Logout</button>
+
+<div class="table-container">
+
+  <h2 style="text-align:center; color:#16a085;">Your Vehicle Repair Details</h2>
+
+  <button id="addBtn">+ Add Repair Details</button>
+
+  <input type="text" id="searchBar" onkeyup="searchBookings()" placeholder="Search...">
+
+  <table>
+    <thead>
+      <tr>
+        <th>Vehicle Reg No</th>
+        <th>Workshop</th>
+        <th>Location</th>
+        <th>Repair Date</th>
+        <th>Report</th>
+        <th>Diagnosis</th>
+        <th>Parts Replaced</th>
+        <th>Cost</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody id="repairTable">
+      <tr><td colspan="9">Loading repair details...</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Modal -->
+<div id="repairModal" class="modal">
+  <div class="modal-content">
+    <h3>Add Repair Details</h3>
+
+    <label>Workshop</label>
+    <input type="text" id="workshop">
+
+    <label>Workshop Location</label>
+    <input type="text" id="location">
+
+    <label>Repair Date</label>
+    <input type="date" id="RepairDate">
+
+    <label>Repair Report</label>
+    <input type="text" id="IssueReport">
+
+    <label>Diagnosis</label>
+    <input type="text" id="Diagnosis">
+
+    <label>Parts Replaced</label>
+    <input type="text" id="PartsReplaced">
+
+    <label>Cost</label>
+    <input type="number" id="cost">
+
+    <label>Status</label>
+    <input type="text" id="Status">
+
+    <button id="saveRepair">Save</button>
+    <button id="closeModal">Close</button>
+  </div>
+</div>
+
+<script>
+
+window.onload = function() {
+
+  const customerName = localStorage.getItem("customerName");
+  const regNum = localStorage.getItem("customerregisternum");
+
+  if (!regNum) {
+    alert("Vehicle number missing. Please login again.");
+    window.location.href = "log.html";
+    return;
+  }
+
+  document.getElementById("welcome").textContent =
+    `Welcome, ${customerName || "User"}!`;
+
+  loadRepairData(regNum);
+
+  // Logout
+  document.getElementById("logoutBtn").onclick = function() {
+    localStorage.clear();
+    window.location.href = "log.html";
+  };
+
+  // Open modal
+  document.getElementById("addBtn").onclick = function() {
+    document.getElementById("repairModal").style.display = "block";
+  };
+
+  // Close modal
+  document.getElementById("closeModal").onclick = closeModal;
+
+  // Close modal if clicked outside
+  window.onclick = function(event) {
+    if (event.target === document.getElementById("repairModal")) {
+      closeModal();
+    }
+  };
+
+  // Save repair
+  document.getElementById("saveRepair").onclick = async function () {
+
+    const workshop = workshop.value.trim();
+    const location = location.value.trim();
+    const RepairDate = RepairDate.value.trim();;
+    const IssueReport = IssueReport.value.trim();
+    const Diagnosis = Diagnosis.value.trim();
+    const PartsReplaced = PartsReplaced.value.trim();
+    const cost = cost.value.trim();
+    const Status = Status.value.trim();
+
+    if (!workshop || !location || !RepairDate || !IssueReport || !Diagnosis || !PartsReplaced || !cost || !Status) {
+      alert("Please fill all fields!");
+      return;
+    }
+
+    try {
+      const response = await fetch("http://localhost:8080/Vehicle/Repair/Register", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: `registernum=${regNum}&workshop=${workshop}&location=${location}&RepairDate=${RepairDate}&IssueReport=${IssueReport}&Diagnosis=${Diagnosis}&PartsReplaced=${PartsReplaced}&cost=${cost}&Status=${Status}`
+      });
+
+      if (!response.ok) throw new Error("Failed to save");
+
+      alert("Repair details added successfully!");
+      closeModal();
+      clearForm();
+      loadRepairData(regNum);
+
+    } catch (err) {
+      alert("Error saving repair details. Check server.");
+    }
+  };
+};
+
+function closeModal() {
+  document.getElementById("repairModal").style.display = "none";
+}
+
+function clearForm() {
+  document.querySelectorAll(".modal input").forEach(i => i.value = "");
+}
+
+// Load repair list
+function loadRepairData(regNum) {
+
+  fetch(`http://localhost:8080/Vehicle/Repair/list/${regNum}`)
+    .then(res => res.json())
+    .then(data => {
+
+      const tbody = document.getElementById("repairTable");
+      tbody.innerHTML = "";
+
+      if (!data.length) {
+        tbody.innerHTML = `<tr><td colspan="9" style="color:red;">No repair details found.</td></tr>`;
+        return;
+      }
+
+      data.forEach(r => {
+        tbody.innerHTML += `
+  <tr>
+    <td>${r.registernum}</td>
+    <td>${r.workshop}</td>
+    <td>${r.location}</td>
+    <td>${r.repairDate}</td>
+    <td>${r.issueReport}</td>
+    <td>${r.diagnosis}</td>
+    <td>${r.partsReplaced}</td>
+    <td>${r.cost}</td>
+    <td>${r.status}</td>
+  </tr>`;
+      });
+    })
+    .catch(() => {
+      document.getElementById("repairTable").innerHTML =
+        `<tr><td colspan="9" style="color:red;">Unable to load repair data.</td></tr>`;
+    });
+}
+
+function searchBookings() {
+  const input = document.getElementById("searchBar").value.toLowerCase();
+  const rows = document.querySelectorAll("#repairTable tr");
+
+  rows.forEach(row => {
+    row.style.display = row.textContent.toLowerCase().includes(input) ? "" : "none";
+  });
+}
+
+</script>
+</body>
+</html>

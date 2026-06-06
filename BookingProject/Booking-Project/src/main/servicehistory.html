@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Feedback History</title>
+  <style>
+    body { font-family: Arial,sans-serif; margin:0; background:#f4f6f9; }
+    header { background:#2c3e50; color:white; padding:15px 40px; display:flex; justify-content:space-between; align-items:center; }
+    nav a { color:white; text-decoration:none; margin-left:20px; }
+    nav a:hover { color:#1abc9c; }
+    #logoutBtn { padding:5px 10px; background:#e74c3c; border:none; color:white; border-radius:5px; cursor:pointer; }
+    .table-container { max-width:95%; margin:20px auto; background:white; border-radius:10px; padding:20px; overflow-x:auto; box-shadow:0 4px 10px rgba(0,0,0,0.1); }
+    table { width:100%; border-collapse:collapse; text-align:center; }
+    th, td { padding:12px; border:1px solid #ddd; }
+    th { background:#16a085; color:white; }
+    tr:nth-child(even) td { background:#f9f9f9; }
+
+    /* ✅ Search Bar Style */
+    #searchBar {
+      width: 98%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div style="display:flex; align-items:center; gap:10px;">
+    <img src="logo1.png" alt="Book Mechanic Logo" style="height:50px;">
+    <h1>Book Mechanic</h1>
+  </div>
+  <nav>
+    <a href="shopin.html">Home</a>
+    <a href="shopregister.html">Register</a>
+    <a href="serviceindex.html">Services List</a>
+    <a href="shoplogin.html">Login</a>
+  </nav>
+</header>
+
+<div class="table-container">
+
+  <!-- ✅ Added Search Box -->
+  <input type="text" id="searchBar" onkeyup="searchFeedback()" placeholder="Search feedback...">
+
+  <table>
+    <thead>
+      <tr>
+        <th>Customer Name</th>
+        <th>Email</th>
+        <th>Mechanic Name</th>
+        <th>Mechanic Mobile</th>
+        <th>Service Details</th>
+        <th>Date</th>
+        <th>Time</th>
+        <th>Shop Name</th>
+        <th>Shop Email</th>
+        <th>Vehicle</th>
+        <th>Rating</th>
+        <th>Feedback</th>
+      </tr>
+    </thead>
+    <tbody id="feedbackHistory">
+      <tr><td colspan="12" style="text-align:center;">Loading feedback history...</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<script>
+window.onload = function() {
+  const shopEmail = localStorage.getItem("shopEmail");
+  
+  if (!shopEmail) {
+    alert("Please log in first!");
+    window.location.href = "shoplogin.html";
+    return;
+  }
+
+  fetch(`http://localhost:8080/feedback/list/shop/${shopEmail}`)
+    .then(res => res.json())
+    .then(feedbacks => {
+      const tbody = document.getElementById("feedbackHistory");
+      tbody.innerHTML = "";
+
+      if (feedbacks.length === 0) {
+        tbody.innerHTML = "<tr><td colspan='12'>No feedback submitted yet.</td></tr>";
+        return;
+      }
+
+      feedbacks.forEach(f => {
+        tbody.innerHTML += `
+          <tr>
+            <td>${f.customerName}</td>
+            <td>${f.customerEmail}</td>
+            <td>${f.mechanicName}</td>
+            <td>${f.mobile}</td>
+            <td>${f.serviceDetails}</td>
+            <td>${f.serviceDate}</td>
+            <td>${f.serviceTime}</td>
+            <td>${f.shopName}</td>
+            <td>${f.shopemail}</td>
+            <td>${f.vehicle}</td>
+            <td>${f.rating}</td>
+            <td>${f.feedback}</td>
+          </tr>`;
+      });
+    })
+    .catch(err => {
+      console.error(err);
+      document.getElementById("feedbackHistory").innerHTML =
+        "<tr><td colspan='12' style='color:red;'>Failed to load feedback</td></tr>";
+    });
+
+  document.getElementById("logoutBtn").addEventListener("click", () => {
+    localStorage.removeItem("shopName");
+    localStorage.removeItem("shopEmail");
+    window.location.href = "shoplogin.html";
+  });
+};
+
+// ✅ Search Filtering Feature Added
+function searchFeedback() {
+  const input = document.getElementById("searchBar").value.toLowerCase();
+  const rows = document.querySelectorAll("#feedbackHistory tr");
+
+  rows.forEach(row => {
+    const rowText = row.textContent.toLowerCase();
+    row.style.display = rowText.includes(input) ? "" : "none";
+  });
+}
+</script>
+
+</body>
+</html>

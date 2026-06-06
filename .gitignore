@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Virtual Environment
+venv/
+env/
+.venv/
+
+# VS Code
+.vscode/
+
+# PyCharm
+.idea/
+
+# Upload folders
+uploads/
+static/uploads/
+
+# Chroma DB
+vehicle_db/
+damage_db/
+
+# Logs
+*.log
+
+# Environment Variables
+.env
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS Files
+.DS_Store
+Thumbs.db

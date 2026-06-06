@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Mechanic Details - Book Mechanic</title>
+  <style>
+    body { margin:0; font-family:Arial,sans-serif; background:#f4f6f9; }
+    header { background:#2c3e50; color:white; display:flex; justify-content:space-between; align-items:center; padding:15px 40px; }
+    header h1 { margin:0; font-size:22px; }
+    nav a { color:white; text-decoration:none; margin-left:20px; font-weight:500; }
+    nav a:hover { color:#1abc9c; }
+    #welcome { text-align:center; margin:20px 0; font-size:22px; color:#2c3e50; }
+    #logoutBtn { display:block; margin:0 auto 20px auto; padding:10px 20px; background:#e74c3c; color:white; font-weight:bold; border:none; border-radius:6px; cursor:pointer; }
+    .table-container { max-width:95%; margin:20px auto 50px auto; background:white; border-radius:10px; padding:20px; overflow-x:auto; box-shadow:0 4px 10px rgba(0,0,0,0.1); }
+    table { width:100%; border-collapse:collapse; text-align:center; }
+    th, td { padding:12px; border:1px solid #ddd; vertical-align:middle; }
+    th { background:#16a085; color:white; }
+    tr:nth-child(even) td { background:#f9f9f9; }
+    tr:hover td { background:#e8f8f5; }
+    .rating { display:flex; justify-content:center; gap:4px; cursor:pointer; }
+    .star { font-size:20px; color:#ccc; transition:color 0.2s; }
+    .star.selected { color:gold; }
+    textarea { width:100%; resize:vertical; min-height:40px; padding:5px; }
+    button.submitFeedback { background:#3498db; color:white; border:none; padding:6px 12px; border-radius:4px; cursor:pointer; font-weight:bold; }
+    button.submitFeedback:hover { background:#21618c; }
+    #loading { text-align:center; padding:20px; color:#555; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div style="display:flex; align-items:center; gap:10px;">
+    <img src="logo1.png" alt="Book Mechanic Logo" style="height:50px;">
+    <h1>Book Mechanic</h1>
+  </div>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="register.html">Register</a>
+    <a href="serviceindex.html">Services List</a>
+    <a href="loginindex.html">Login</a>
+  </nav>
+</header>
+
+<div id="welcome">Welcome, Guest!</div>
+<button id="logoutBtn">Logout</button>
+
+<div class="table-container">
+  <h2 style="text-align:center; color:#16a085;">Your Pending Feedbacks</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Customer Name</th>
+        <th>Email</th>
+        <th>Mobile</th>
+        <th>Vehicle</th>
+        <th>Service Details</th>
+        <th>Date</th>
+        <th>Time</th>
+        <th>Shop Name</th>
+        <th>Shop Email</th>
+        <th>Mechanic</th>
+        <th>Feedback</th>
+      </tr>
+    </thead>
+    <tbody id="confirmedbookingdetails">
+      <tr><td colspan="11" id="loading">Loading bookings...</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<script>
+window.onload = function() {
+  const customerName = localStorage.getItem("customerName") || "Guest";
+  const customerEmail = localStorage.getItem("customerEmail");
+
+  document.getElementById("welcome").textContent = `Welcome, ${customerName}!`;
+
+  if (!customerEmail) {
+    alert("Please log in first!");
+    window.location.href = "loginindex.html";
+    return;
+  }
+
+  // Fetch bookings for this user
+  fetch(`http://localhost:8080/ConfirmBooking/list/${customerEmail}`)
+    .then(response => response.json())
+    .then(bookings => {
+      const tbody = document.getElementById("confirmedbookingdetails");
+      tbody.innerHTML = "";
+
+      // ✅ Show only "Not Submitted" bookings
+      const pending = bookings.filter(b => b.status === "Not Submitted");
+
+      if (pending.length === 0) {
+        tbody.innerHTML = "<tr><td colspan='11'>No pending feedbacks found.</td></tr>";
+        return;
+      }
+
+      pending.forEach((b, index) => {
+        tbody.innerHTML += `
+          <tr data-booking-id="${b.id}">
+            <td>${b.name}</td>
+            <td>${b.emailId}</td>
+            <td>${b.mobileno}</td>
+            <td>${b.vehicleName}</td>
+            <td>${b.servicedetails}</td>
+            <td>${b.servicedate}</td>
+            <td>${b.servicetime}</td>
+            <td>${b.shopname}</td>
+            <td>${b.shopemailId}</td>
+            <td>${b.mechanicname}</td>
+            <td>
+              <div class="rating" id="rating-${index}" data-rating="0">
+                ${[1,2,3,4,5].map(i => `<span class='star' data-value='${i}'>★</span>`).join('')}
+              </div>
+              <textarea id="feedback-${index}" placeholder="Write feedback..."></textarea>
+              <button class="submitFeedback" onclick="submitFeedback(${index})">Submit</button>
+            </td>
+          </tr>`;
+      });
+
+      // ⭐ Star rating logic
+      document.querySelectorAll(".rating").forEach(ratingDiv => {
+        const stars = ratingDiv.querySelectorAll(".star");
+        stars.forEach(star => {
+          star.addEventListener("click", () => {
+            const value = parseInt(star.getAttribute("data-value"));
+            stars.forEach(s => s.classList.remove("selected"));
+            for (let i = 0; i < value; i++) stars[i].classList.add("selected");
+            ratingDiv.setAttribute("data-rating", value);
+          });
+        });
+      });
+    })
+    .catch(error => {
+      console.error("Error fetching bookings:", error);
+      document.getElementById("confirmedbookingdetails").innerHTML =
+        "<tr><td colspan='11' style='color:red;'>Error fetching your bookings</td></tr>";
+    });
+
+  // Logout
+  document.getElementById("logoutBtn").addEventListener("click", () => {
+    localStorage.clear();
+    window.location.href = "loginindex.html";
+  });
+};
+
+// ✅ Submit feedback and update booking status
+async function submitFeedback(index) {
+  const ratingDiv = document.getElementById(`rating-${index}`);
+  const rating = parseInt(ratingDiv.getAttribute("data-rating"));
+  const feedbackText = document.getElementById(`feedback-${index}`).value.trim();
+
+  if (!rating || !feedbackText) {
+    alert("Please provide both rating and feedback!");
+    return;
+  }
+
+  const row = ratingDiv.closest("tr");
+  const bookingId = row.getAttribute("data-booking-id");
+
+  const payload = {
+    customerName: row.children[0].textContent,
+    customerEmail: row.children[1].textContent,
+    mobile: row.children[2].textContent,
+    vehicle: row.children[3].textContent,
+    serviceDetails: row.children[4].textContent,
+    serviceDate: row.children[5].textContent,
+    serviceTime: row.children[6].textContent,
+    shopName: row.children[7].textContent,
+    shopemail: row.children[8].textContent,
+    mechanicName: row.children[9].textContent,
+    rating,
+    feedback: feedbackText
+  };
+
+  try {
+    // Step 1: Submit feedback
+    const feedbackResponse = await fetch("http://localhost:8080/feedback/submit", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+    if (!feedbackResponse.ok) throw new Error("Feedback submission failed");
+
+    // Step 2: Update booking status
+    const updateResponse = await fetch("http://localhost:8080/ConfirmBooking/update", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({ id: bookingId, status: "Feedback Submitted" })
+    });
+    if (!updateResponse.ok) throw new Error("Status update failed");
+
+    alert("✅ Feedback submitted successfully and status updated!");
+    row.remove(); // Remove the booking from the list after submission
+  } catch (err) {
+    console.error(err);
+    alert("Error submitting feedback or updating status.");
+  }
+}
+</script>
+
+</body>
+</html>

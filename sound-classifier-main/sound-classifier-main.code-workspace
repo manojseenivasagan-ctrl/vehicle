@@ -1,0 +1,12 @@
+{
+	"folders": [
+		{
+			"name": "sound-classifier-main",
+			"path": "."
+		}
+	],
+	"settings": {
+		"python-envs.defaultEnvManager": "ms-python.python:system",
+		"liveServer.settings.port": 5502
+	}
+}

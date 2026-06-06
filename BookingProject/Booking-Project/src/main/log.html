@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Vehicle Doctor Customer Register Page</title>
+    <style>
+        body { background-color:#f4f6f9; font-family: Arial,sans-serif; margin:0; padding:0; }
+        header {
+            background: #0f2c3c;
+            color: #d9e6ef;
+            padding: 18px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        nav a { color:white; text-decoration:none; margin-left:20px; font-weight:500; }
+        nav a:hover { color:#1abc9c; }
+        .slogan { text-align:center; margin:20px 0; font-size:20px; color:#34495e; }
+        .login-container { background-color: rgb(229, 215, 171); border:2px solid black; border-radius:10px; max-width:400px; margin:50px auto; padding:30px; box-shadow:0 0 10px rgba(0,0,0,0.2); }
+        h2 { text-align:center; color:rgb(156,98,16); margin-bottom:20px; }
+        form { display:flex; flex-direction:column; }
+        label { margin-top:12px; font-weight:bold; }
+        input, button { padding:10px; margin-top:6px; border-radius:5px; border:1px solid #aaa; font-size:14px; }
+        input:focus { outline:none; border-color:#1abc9c; box-shadow:0 0 5px rgba(26,188,156,0.3); }
+        button { background-color:#1abc9c; color:white; font-weight:bold; cursor:pointer; margin-top:20px; padding:12px; border:none; transition:0.3s; }
+        button:hover { background-color:#16a085; }
+        .extra-links { text-align:center; margin-top:15px; font-size:14px; }
+        .extra-links a { text-decoration:none; color:#1abc9c; font-weight:bold; }
+        .extra-links a:hover { text-decoration:underline; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div style="display:flex; align-items:center; gap:10px;">
+        <img src="logo_2.png" alt="Vehicle Doctor Logo" style="height:50px;">
+        <h1 style="margin:0; font-size:22px;">Vehicle Doctor</h1>
+    </div>
+    <nav>
+        <a href="in.html">Home</a>
+        <a href="reg.html">Register</a>
+        <a href="ser.html">Services List</a>
+        <a href="log.html">Login</a>
+    </nav>
+</header>
+
+<div class="slogan">
+    <p>Secure Login. Access Your Vehicle Services Instantly.</p>
+</div>
+
+<div class="login-container">
+    <h2>Customer Login</h2>
+    <form id="loginForm">
+        <label for="registernum">Vehicle Register Number:</label>
+        <input type="text" id="registernum" placeholder="Enter your Vehicle Register Number" required>
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" placeholder="Enter your password" required>
+
+        <button type="submit">Login</button>
+    </form>
+
+    <div class="extra-links">
+        <p>Don't have an account? <a href="reg.html">Register here</a></p>
+    </div>
+</div>
+
+<script>
+document.getElementById("loginForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const registernum = document.getElementById("registernum").value; // fixed
+    const password = document.getElementById("password").value;
+
+    try {
+        const response = await fetch("http://localhost:8080/cust/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: `registernum=${encodeURIComponent(registernum)}&password=${encodeURIComponent(password)}`
+        });
+
+        const result = await response.json();
+
+        if (result.status === "success") {
+            localStorage.setItem("customerName", result.name);
+            localStorage.setItem("customerregisternum", registernum);
+
+            window.location.href = "vehicleindex.html"; 
+        } else {
+            alert(result.message || "Invalid register number or password");
+        }
+    } catch (error) {
+        console.error("Login error:", error);
+        alert("Error connecting to server. Try again later.");
+    }
+});
+</script>
+
+</body>
+</html>
