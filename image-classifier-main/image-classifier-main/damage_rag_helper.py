@@ -3,7 +3,7 @@ import os
 from langchain_cohere import CohereEmbeddings
 from langchain_chroma import Chroma
 
-os.environ["COHERE_API_KEY"] = "4RZMGFGl6RzYko5LktivFU5Qw2FkB5cvMWlZBETu"
+COHERE_API_KEY = os.getenv("COHERE_API_KEY")
 
 embeddings = CohereEmbeddings(
     model="embed-english-v3.0",

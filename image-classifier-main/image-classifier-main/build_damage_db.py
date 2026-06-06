@@ -3,8 +3,9 @@ from langchain_cohere import CohereEmbeddings
 from langchain_chroma import Chroma
 import os
 
-COHERE_API_KEY = os.getenv("4RZMGFGl6RzYko5LktivFU5Qw2FkB5cvMWlZBETu")
+import os
 
+COHERE_API_KEY = os.getenv("COHERE_API_KEY")
 file_path = "damage_repair_guide.txt"
 
 with open(file_path, "r", encoding="utf-8") as f:
@@ -28,7 +29,7 @@ for record in records:
 
 embeddings = CohereEmbeddings(
     model="embed-english-v3.0",
-    cohere_api_key="4RZMGFGl6RzYko5LktivFU5Qw2FkB5cvMWlZBETu",
+    cohere_api_key=COHERE_API_KEY,
     user_agent="vehicle-doctor"
 )
 
