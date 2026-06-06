@@ -2,178 +2,104 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Vehicle Doctor</title>
-
+  <title>Book Mechanic Page</title>
   <style>
-    /* ---------- RESET ---------- */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
     body {
+      margin: 0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background: #f4f6f9;
       color: #333;
     }
 
-    /* ---------- HEADER ---------- */
+    /* Header */
     header {
-      background: #0f2c3c;
-      color: #d9e6ef;
-      padding: 18px 40px;
+      background: #2c3e50;
+      color: white;
+      padding: 15px 40px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 3px 12px rgba(0,0,0,0.2);
-      position: sticky;
-      top: 0;
-      z-index: 100;
     }
-
     header h1 {
       margin: 0;
       font-size: 24px;
-      font-weight: bold;
-      letter-spacing: 1px;
+      letter-spacing: 0px;
     }
-
-    header img {
-      height: 55px;
-      filter: drop-shadow(2px 3px 2px rgba(0,0,0,0.3));
-    }
-
     nav a {
-      color: #ffffff;
+      color: white;
       text-decoration: none;
-      margin-left: 25px;
+      margin-left: 20px;
       font-weight: 500;
       transition: 0.3s;
-      font-size: 16px;
     }
-
     nav a:hover {
-      color: #00e6b8;
-      text-shadow: 0 0 8px #00e6b8;
+      color: #1abc9c;
     }
 
-    /* ---------- HERO SECTION ---------- */
+    /* Hero Section */
     .hero {
-      background: linear-gradient(120deg, #1da2ba, #f4cf6f);
-      color: #1b1f22;
-      text-align: center;
-      padding: 120px 20px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .hero::before,
-    .hero::after {
-      content: "";
-      position: absolute;
-      width: 180px;
-      height: 180px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.25);
-      animation: float 6s infinite ease-in-out;
-    }
-
-    .hero::before {
-      top: 20px; left: 40px;
-    }
-    .hero::after {
-      bottom: 20px; right: 40px;
-      animation-delay: 2s;
-    }
-
-    @keyframes float {
-      0% { transform: translateY(0); }
-      50% { transform: translateY(-25px); }
-      100% { transform: translateY(0); }
-    }
-
-    .hero h2 {
-      font-size: 48px;
-      margin-bottom: 15px;
-      letter-spacing: 1px;
-      font-weight: 700;
-      text-shadow: 0 2px 10px rgba(0,0,0,0.2);
-      position: relative;
-    }
-
-    .hero p {
-      font-size: 20px;
-      margin-bottom: 30px;
-      position: relative;
-    }
-
-    .hero button {
-      background: #0f2c3c;
+      background: linear-gradient(to right, #1abc9c, #16a085);
       color: white;
-      padding: 14px 30px;
+      text-align: center;
+      padding: 100px 20px;
+    }
+    .hero h2 {
+      font-size: 42px;
+      margin-bottom: 15px;
+    }
+    .hero p {
+      font-size: 18px;
+      margin-bottom: 30px;
+    }
+    .hero button {
+      background: white;
+      color: #16a085;
+      padding: 12px 25px;
       border: none;
-      border-radius: 50px;
-      font-size: 17px;
+      border-radius: 5px;
+      font-size: 16px;
       cursor: pointer;
-      transition: 0.4s;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      transition: 0.3s;
     }
-
     .hero button:hover {
-      background: #00b89c;
-      transform: translateY(-4px);
-      box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+      background: #f1f1f1;
     }
 
-    /* ---------- FEATURES SECTION ---------- */
+    /* Features */
     .features {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 25px;
-      padding: 70px 40px;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      padding: 60px 40px;
       max-width: 1200px;
       margin: auto;
     }
-
     .card {
       background: white;
-      padding: 35px;
-      border-radius: 12px;
+      padding: 30px;
+      border-radius: 10px;
       text-align: center;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-      transition: 0.3s ease;
-      border-top: 5px solid #00c8a8;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      transition: 0.3s;
     }
-
     .card:hover {
-      transform: translateY(-7px);
-      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+      transform: translateY(-5px);
     }
-
     .card h3 {
       margin-bottom: 15px;
-      color: #00a88f;
-      font-size: 22px;
+      color: #16a085;
     }
 
-    .card p {
-      font-size: 16px;
-      line-height: 1.5;
-      color: #555;
-    }
-
-    /* ---------- FOOTER ---------- */
+    /* Footer */
     footer {
-      background: #16252e;
+      background: #2c3e50;
       color: white;
       margin-top: 40px;
-      padding-top: 30px;
     }
 
     .footer-container {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       gap: 20px;
       padding: 40px;
       max-width: 1200px;
@@ -182,16 +108,19 @@
 
     .footer-section h3 {
       margin-bottom: 15px;
-      color: #00e6b8;
-      font-size: 18px;
+      color: #1abc9c;
     }
 
-    .footer-section p,
+    .footer-section p, 
     .footer-section a {
-      font-size: 15px;
-      color: #d8d8d8;
+      font-size: 14px;
+      color: #ddd;
       text-decoration: none;
       line-height: 1.6;
+    }
+
+    .footer-section a:hover {
+      color: #1abc9c;
     }
 
     .footer-section ul {
@@ -204,100 +133,74 @@
     }
 
     .social-icons a {
-      font-size: 22px;
-      margin-right: 15px;
-      color: #d8d8d8;
+      font-size: 20px;
+      margin-right: 10px;
+      color: white;
       transition: 0.3s;
     }
 
     .social-icons a:hover {
-      color: #00e6b8;
-      text-shadow: 0 0 8px #00e6b8;
+      color: #1abc9c;
     }
 
     .footer-bottom {
-      background: #0d1a22;
       text-align: center;
       padding: 15px;
+      background: #1f2d3d;
       font-size: 14px;
-      color: #80a0b0;
-      margin-top: 10px;
     }
 
-html {
-  overflow-y: scroll;       /* allow scroll */
-  scrollbar-width: none;    /* hide in Firefox */
-}
-html::-webkit-scrollbar {
-  display: none;            /* hide in Chrome, Safari, Edge */
-}
-
-body {
-  overflow-x: hidden !important;   /* no horizontal overflow */
-}
-
-* {
-  max-width: 100%;                /* prevent overflow */
-}
-
-.hero, .features, footer {
-  overflow-x: hidden;             /* extra safety */
-}
 
   </style>
 </head>
-
 <body>
 
-  <!-- HEADER -->
+  <!-- Header -->
   <header>
-    <div style="display:flex; align-items:center; gap:12px;">
-      <img src="logo_2.png" alt="Vehicle Doctor Logo">
-      <h1>Vehicle Doctor</h1>
-    </div>
-
+    <div style="display:flex; align-items:center; gap:10px;">
+    <img src="logo1.png" alt="Book Mechanic Logo" style="height:50px;">
+    <h1 style="margin:0; font-size:22px;">Book Mechanic</h1>
+  </div>
     <nav>
-      <a href="in.html">Home</a>
-      <a href="reg.html">Register</a>
-      <a href="ser.html">Services List</a>
-      <a href="log.html">Login</a>
+      <a href="index.html">Home</a>
+      <a href="register.html">Register</a>
+      <a href="serviceindex.html">Services List</a>
+      <a href="loginindex.html">Login</a>
     </nav>
   </header>
 
-  <!-- HERO SECTION -->
+  <!-- Hero Section -->
   <section class="hero">
-    <h2>Smooth Rides Start with Smart Care</h2>
-    <p>Your trusted partner for vehicle health check</p>
-    <button onclick="window.location.href='service.html'">Explore Services</button>
+    <h2>Welcome to Book Mechanic Homepage</h2>
+    <p>Smooth Rides Start with Smart Care.</p>
+    <button onclick="window.location.href='service.html'">Explore Service</button>
   </section>
 
-  <!-- FEATURES -->
+  <!-- Features -->
   <section class="features">
     <div class="card">
       <h3>🏍️ Two Wheeler Care</h3>
-      <p>Reliable servicing to ensure your bike stays safe and ready for the road.</p>
+      <p>Reliable servicing to ensure your bike stays safe and road-ready.</p>
     </div>
-
     <div class="card">
       <h3>🚗 Four Wheeler Care</h3>
-      <p>From quick checkups to major repairs, your car is in trusted hands.</p>
+      <p>From quick checkups to major repairs — your car is in trusted hands.</p>
     </div>
   </section>
 
-  <!-- FOOTER -->
+  <!-- Footer -->
   <footer>
     <div class="footer-container">
-
       <div class="footer-section">
         <h3>About Us</h3>
-        <p>We make vehicle care simple — Check your vehicle's health in just a few clicks.</p>
+        <p>We make vehicle care simple — book your mechanic in just a few clicks.</p>
       </div>
 
       <div class="footer-section">
         <h3>Quick Links</h3>
         <ul>
-          <li><a href="in.html">Home</a></li>
-          <li><a href="log.html">Login</a></li>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="loginindex.html">Login</a></li>
           <li><a href="about.html">About</a></li>
           <li><a href="contact.html">Contact</a></li>
         </ul>
@@ -305,8 +208,8 @@ body {
 
       <div class="footer-section">
         <h3>Contact</h3>
-        <p>Email: vehicledoctor@gmail.com</p>
-        <p>Phone: +91 98765 43211</p>
+        <p>Email: bookmechanic@gmail.com</p>
+        <p>Phone: +91 98765 43210</p>
       </div>
 
       <div class="footer-section">
@@ -318,13 +221,10 @@ body {
           <a href="#">📸</a>
         </div>
       </div>
-
     </div>
-
     <div class="footer-bottom">
-      © 2026 Vehicle Doctor | All Rights Reserved
+      <p>© 2025 My Website | All Rights Reserved</p>
     </div>
-
   </footer>
 
 </body>
