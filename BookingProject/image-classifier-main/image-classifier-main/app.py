@@ -120,7 +120,7 @@ def index():
         class_index = np.argmax(preds)
         confidence = round(float(np.max(preds) * 100), 2)
 
-        # ✅ CORRECT CLASS DECODING
+        # CORRECT CLASS DECODING
         prediction = labelencoder.inverse_transform([class_index])[0]
 
         cause = fault_info[prediction]["cause"]

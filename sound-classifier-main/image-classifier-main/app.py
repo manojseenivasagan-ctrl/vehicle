@@ -2,219 +2,100 @@ import os
 import numpy as np
 import librosa
 import pickle
+import tempfile
 
-from flask import Flask, render_template, request
+from flask import Flask, request, jsonify
+from flask_cors import CORS
 from tensorflow.keras.models import load_model
-
-# RAG Helper
 
 from rag_helper import get_repair_details
 
-# -----------------------------------
-
-# Flask App
-
-# -----------------------------------
-
+# ---------------------------
+# APP
+# ---------------------------
 app = Flask(__name__)
+CORS(app)
 
-UPLOAD_FOLDER = "uploads"
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+# ---------------------------
+# MODEL LOAD
+# ---------------------------
+model = load_model("audio_models.h5")
 
-# -----------------------------------
-
-# Load Model & Label Encoder
-
-# -----------------------------------
-
-MODEL_PATH = "audio_models.h5"
-LE_PATH = "labelencoder.pkl"
-
-model = load_model(MODEL_PATH)
-
-with open(LE_PATH, "rb") as f:
+with open("labelencoder.pkl", "rb") as f:
     labelencoder = pickle.load(f)
 
-# -----------------------------------
-
-# Audio Parameters
-
-# -----------------------------------
-
+# ---------------------------
+# AUDIO SETTINGS
+# ---------------------------
 SAMPLE_RATE = 22050
 DURATION = 3
 N_MFCC = 40
 
-# -----------------------------------
-
-# Fault Mapping
-
-# -----------------------------------
-
+# ---------------------------
+# FAULT INFO
+# ---------------------------
 fault_info = {
-    "Car": {
-        "cause": "Timing chain wear detected",
-        "severity": "High",
-        "probability": "89%"
-    },
-
-    "Bus": {
-        "cause": "Brake pad wear detected",
-        "severity": "Critical",
-        "probability": "94%"
-    },
-
-    "Trucks": {
-        "cause": "Drive belt deterioration detected",
-        "severity": "Medium",
-        "probability": "87%"
-    },
-
-    "Motocycles": {
-        "cause": "Wheel bearing wear detected",
-        "severity": "Medium",
-        "probability": "85%"
-    },
-
-    "Train": {
-        "cause": "Traction motor vibration anomaly",
-        "severity": "High",
-        "probability": "92%"
-    },
-
-    "airplane": {
-        "cause": "Combustion imbalance detected",
-        "severity": "Critical",
-        "probability": "96%"
-    },
-
-    "helicopter": {
-        "cause": "Rotor gearbox vibration anomaly",
-        "severity": "Critical",
-        "probability": "95%"
-    },
-
-    "Bics": {
-        "cause": "Chain and brake system wear detected",
-        "severity": "Low",
-        "probability": "81%"
-    }
+    "Car": {"cause": "Timing chain wear detected", "severity": "High"},
+    "Bus": {"cause": "Brake wear detected", "severity": "Critical"},
+    "Trucks": {"cause": "Belt damage detected", "severity": "Medium"},
+    "Motocycles": {"cause": "Bearing wear detected", "severity": "Medium"},
+    "Train": {"cause": "Motor vibration issue", "severity": "High"},
+    "airplane": {"cause": "Combustion issue", "severity": "Critical"},
+    "helicopter": {"cause": "Rotor imbalance", "severity": "Critical"},
+    "Bics": {"cause": "Chain wear", "severity": "Low"}
 }
 
-# -----------------------------------
-
-# Feature Extraction
-
-# -----------------------------------
-
+# ---------------------------
+# FEATURE EXTRACTION
+# ---------------------------
 def extract_features(file_path):
-    audio, sr = librosa.load(
-        file_path,
-        sr=SAMPLE_RATE,
-        duration=DURATION,
-        mono=True
-    )
+    audio, sr = librosa.load(file_path, sr=SAMPLE_RATE, duration=DURATION)
+    mfcc = librosa.feature.mfcc(y=audio, sr=sr, n_mfcc=N_MFCC)
+    return np.mean(mfcc.T, axis=0).reshape(1, -1)
 
-    mfcc = librosa.feature.mfcc(
-        y=audio,
-        sr=sr,
-        n_mfcc=N_MFCC
-    )
+# ---------------------------
+# API
+# ---------------------------
+@app.route("/predict-audio", methods=["POST"])
+def predict_audio():
 
-    mfcc = np.mean(mfcc.T, axis=0)
+    if "file" not in request.files:
+        return jsonify({"error": "No file uploaded"}), 400
 
-    return mfcc.reshape(1, -1)
+    file = request.files["file"]
 
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as tmp:
+        file.save(tmp.name)
+        path = tmp.name
 
-# -----------------------------------
+    try:
+        features = extract_features(path)
 
-# Home Route
+        preds = model.predict(features, verbose=0)
+        idx = np.argmax(preds)
 
-# -----------------------------------
+        prediction = labelencoder.inverse_transform([idx])[0]
+        confidence = float(np.max(preds) * 100)
 
-@app.route("/", methods=["GET", "POST"])
-def index():
+        cause = fault_info.get(prediction, {}).get("cause", "Unknown")
+        severity = fault_info.get(prediction, {}).get("severity", "Unknown")
 
-    prediction = None
-    confidence = None
-    cause = None
-    rag_result = None
+        rag_result = get_repair_details(prediction, cause)
 
-    if request.method == "POST":
+        return jsonify({
+            "prediction": prediction,
+            "confidence": confidence,
+            "cause": cause,
+            "severity": severity,
+            "rag_result": rag_result
+        })
 
-        if "audiofile" not in request.files:
-            return render_template("index.html")
+    finally:
+        if os.path.exists(path):
+            os.remove(path)
 
-        audiofile = request.files["audiofile"]
-
-        if audiofile.filename == "":
-            return render_template("index.html")
-
-        audio_path = os.path.join(
-            UPLOAD_FOLDER,
-            audiofile.filename
-        )
-
-        audiofile.save(audio_path)
-
-        try:
-            features = extract_features(audio_path)
-
-            preds = model.predict(features, verbose=0)
-
-            class_index = np.argmax(preds)
-
-            confidence = round(
-                float(np.max(preds) * 100),
-                2
-            )
-
-            prediction = labelencoder.inverse_transform(
-                [class_index]
-            )[0]
-
-            if prediction in fault_info:
-
-                cause = fault_info[prediction]["cause"]
-
-                rag_result = get_repair_details(
-                    vehicle=prediction,
-                    cause=cause
-                )
-                
-                print("\n===== RAG RESULT =====")
-                print(rag_result)
-                print("======================\n")
-
-            else:
-                cause = "Unknown"
-                rag_result = "No repair information found."
-
-        except Exception as e:
-            rag_result = f"Error: {str(e)}"
-
-        finally:
-            if os.path.exists(audio_path):
-                os.remove(audio_path)
-
-    return render_template(
-        "index.html",
-        prediction=prediction,
-        confidence=confidence,
-        cause=cause,
-        rag_result=rag_result
-    )
-
-
-# -----------------------------------
-
-# Run Flask App
-
-# -----------------------------------
-
+# ---------------------------
+# RUN
+# ---------------------------
 if __name__ == "__main__":
-    app.run(
-        debug=True,
-        host="0.0.0.0",
-        port=3000
-    )
+    app.run(host="0.0.0.0", port=10000)
