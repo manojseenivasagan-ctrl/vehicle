@@ -1,5 +1,8 @@
 from flask import Flask, render_template, request, jsonify
-from flask_cors import CORS
+try:
+    from flask_cors import CORS
+except Exception as e:
+    print("CORS IMPORT ERROR:", e)
 from ultralytics import YOLO
 from werkzeug.utils import secure_filename
 import os
@@ -15,7 +18,10 @@ from damage_rag_helper import get_damage_repair_details
 # ==========================================
 
 app = Flask(__name__)
-CORS(app)
+try:
+    CORS(app)
+except:
+    pass
 
 # ==========================================
 # Configuration
