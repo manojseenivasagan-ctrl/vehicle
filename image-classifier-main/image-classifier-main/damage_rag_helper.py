@@ -5,8 +5,14 @@ from langchain_chroma import Chroma
 
 COHERE_API_KEY = os.getenv("COHERE_API_KEY")
 
+if not COHERE_API_KEY:
+    raise ValueError(
+        "COHERE_API_KEY environment variable not found"
+    )
+
 embeddings = CohereEmbeddings(
     model="embed-english-v3.0",
+    cohere_api_key=COHERE_API_KEY,
     user_agent="vehicle-doctor"
 )
 
