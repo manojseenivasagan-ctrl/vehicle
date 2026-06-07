@@ -1,227 +1,191 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vehicle Doctor Dashboard</title>
-
-```
-<style>
-    body {
-        margin: 0;
-        padding: 0;
-        font-family: Arial, sans-serif;
-        background-color: #f4f4f4;
-    }
-
-    /* Header */
-    header {
-        background: #0f2c3c;
-        color: #d9e6ef;
-        padding: 18px 40px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        box-shadow: 0 3px 12px rgba(0,0,0,0.2);
-        position: sticky;
-        top: 0;
-        z-index: 100;
-    }
-
-    header h1 {
-        margin: 0;
-        font-size: 22px;
-    }
-
-    header img {
-        height: 50px;
-    }
-
-    nav a {
-        color: white;
-        text-decoration: none;
-        margin-left: 20px;
-        font-weight: 500;
-        transition: 0.3s;
-    }
-
-    nav a:hover {
-        color: #1abc9c;
-    }
-
-    /* Slogan */
-    .slogan {
-        text-align: center;
-        margin: 25px 0;
-        font-size: 20px;
-        color: #34495e;
-        font-weight: bold;
-    }
-
-    /* Cards */
-    .container {
-        display: flex;
-        justify-content: center;
-        align-items: stretch;
-        flex-wrap: wrap;
-        gap: 30px;
-        padding: 30px;
-    }
-
-    .box {
-        background-color: rgb(211, 188, 134);
-        border: 2px solid black;
-        border-radius: 12px;
-        width: 320px;
-        text-align: center;
-        padding: 25px;
-        transition: transform 0.3s, box-shadow 0.3s;
-    }
-
-    .box:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-    }
-
-    .box img {
-        width: 160px;
-        height: 160px;
-        object-fit: contain;
-        margin-bottom: 15px;
-    }
-
-    .box h2 {
-        color: rgb(156, 98, 16);
-        margin-bottom: 20px;
-    }
-
-    .btn-link {
-        display: inline-block;
-        background-color: #4CAF50;
-        color: white;
-        padding: 12px 20px;
-        font-weight: bold;
-        font-size: 15px;
-        border-radius: 6px;
-        text-decoration: none;
-        transition: 0.3s;
-    }
-
-    .btn-link:hover {
-        background-color: #104212;
-    }
-
-    footer {
-        margin-top: 40px;
-        text-align: center;
-        background: #0f2c3c;
-        color: white;
-        padding: 15px;
-    }
-
-    @media (max-width: 768px) {
-
-        header {
-            flex-direction: column;
-            align-items: flex-start;
+    <title>Vehicle Index</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
         }
 
-        nav {
-            margin-top: 10px;
+        /* Header / Navigation */
+        header {
+      background: #0f2c3c;
+      color: #d9e6ef;
+      padding: 18px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.2);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+        header h1 {
+            margin: 0;
+            font-size: 22px;
         }
 
         nav a {
-            margin-left: 0;
-            margin-right: 15px;
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+            font-weight: 500;
+            transition: 0.3s;
         }
 
+        nav a:hover {
+            color: #1abc9c;
+        }
+
+        /* Slogan */
+        .slogan {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 20px;
+            color: #34495e;
+        }
+
+        /* Register Boxes */
         .container {
-            flex-direction: column;
+            display: flex;
+            justify-content: space-around;
             align-items: center;
+            flex-wrap: wrap;
+            padding: 20px;
         }
-    }
-</style>
-```
 
+        .box {
+            background-color: rgb(211, 188, 134);
+            border: 2px solid black;
+            border-radius: 10px;
+            width: 300px;
+            text-align: center;
+            padding: 30px;
+            margin: 20px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+
+        .box img {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            color: rgb(156, 98, 16);
+            margin-bottom: 20px;
+        }
+
+        .btn-link {
+            display: inline-block;
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            font-weight: bold;
+            font-size: medium;
+            border-radius: 6px;
+            text-align: center;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: 0.3s;
+        }
+
+        .btn-link:hover {
+            background-color: #104212;
+        }
+
+        .extra-links {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 14px;
+        }
+
+        .extra-links a {
+            text-decoration: none;
+            color: #104212;
+            font-weight: bold;
+        }
+
+        .extra-links a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 700px) {
+            .container {
+                flex-direction: column;
+            }
+
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            nav a {
+                margin-left: 0;
+                margin-right: 15px;
+                margin-top: 5px;
+            }
+        }
+    </style>
 </head>
-
 <body>
 
-<header>
-
-```
-<div style="display:flex; align-items:center; gap:10px;">
-    <img src="logo_2.png" alt="Vehicle Doctor Logo">
-    <h1>Vehicle Doctor</h1>
-</div>
-
-<nav>
-    <a href="index.html">Home</a>
-    <a href="reg.html">Register</a>
-    <a href="ser.html">Services List</a>
-    <a href="log.html">Login</a>
-</nav>
-```
-
+    <!-- Header / Navigation -->
+    <header>
+        <div style="display:flex; align-items:center; gap:10px;">
+    <img src="logo_2.png" alt="Vehicle Doctor Logo" style="height:50px;">
+    <h1 style="margin:0; font-size:22px;">Vehicle Doctor</h1>
+  </div>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="reg.html">Register</a>
+      <a href="ser.html">Services List</a>
+      <a href="log.html">Login</a>
+    </nav>
 </header>
+    </header>
 
-<div class="slogan">
-    Connect with us. Maintain your Vehicle!
-</div>
+    <!-- Slogan -->
+    <div class="slogan">
+        <p>Connect with us. Maintain your Vehicle!.</p>
+    </div>
 
-<div class="container">
+    <!-- Register Boxes -->
+    <div class="container">
+        <!-- Accidental History -->
+        <div class="box">
+            <img src="sensor.jpeg" alt="sensor Image" style="height:100px;">
+            <h2>Sensor Dashboard</h2>
+            <a href="sensor.html" class="btn-link">Go to Sensor Dashboard Page</a>
+        </div>
 
-```
-<!-- Sensor Dashboard -->
+        <!-- Repairs History Details -->
+        <div class="box">
+            <img src="visual.png" alt="visual Image" style="height:150px;">
+            <h2>Visual Detection</h2>
+            <a href="http://127.0.0.1:4000/" class="btn-link" target="_blank">
+    Go to Visual Detection Page
+</a>
+        </div>
 
-<div class="box">
-    <img src="sensor.jpeg" alt="Sensor Dashboard">
-    <h2>Sensor Dashboard</h2>
-
-    <a href="sensor.html" class="btn-link">
-        Go to Sensor Dashboard
-    </a>
-</div>
-
-<!-- Visual Detection -->
-
-<div class="box">
-    <img src="visual.png" alt="Visual Detection">
-
-    <h2>Visual Detection</h2>
-
-    <a
-        href="https://YOUR-IMAGE-CLASSIFICATION.onrender.com"
-        class="btn-link"
-        target="_blank"
-    >
-        Go to Visual Detection
-    </a>
-</div>
-
-<!-- Sound Detection -->
-
-<div class="box">
-    <img src="sound.png" alt="Sound Detection">
-
-    <h2>Sound Based Detection</h2>
-
-    <a
-        href="https://YOUR-SOUND-CLASSIFICATION.onrender.com"
-        class="btn-link"
-        target="_blank"
-    >
-        Go to Sound Detection
-    </a>
-</div>
-```
-
-</div>
-
-<footer>
-    © 2026 Vehicle Doctor AI | All Rights Reserved
-</footer>
-
+        <div class="box">
+            <img src="sound.png" alt="sound Image" style="height:150px;">
+            <h2>Sound Based Detection</h2>
+            <a href="http://127.0.0.1:3000/" class="btn-link">Go to Sound Detection Page</a>
+        </div>
 </body>
 </html>

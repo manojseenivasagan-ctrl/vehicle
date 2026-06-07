@@ -3,10 +3,9 @@ from langchain_cohere import CohereEmbeddings
 from langchain_chroma import Chroma
 import os
 
-import os
-
 COHERE_API_KEY = os.getenv("COHERE_API_KEY")
-file_path = "damage_repair_guide.txt"
+
+file_path = r"D:/ideas/image-classifier-main/image-classifier-main/damage_repair_guide.txt"
 
 with open(file_path, "r", encoding="utf-8") as f:
     content = f.read()
@@ -18,11 +17,9 @@ records = content.split(
 documents = []
 
 for record in records:
-
     record = record.strip()
 
     if record:
-
         documents.append(
             Document(page_content=record)
         )

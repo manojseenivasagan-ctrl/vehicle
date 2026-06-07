@@ -1,31 +1,16 @@
-from flask import Flask, render_template, request, jsonify
-try:
-    from flask_cors import CORS
-except Exception as e:
-    print("CORS IMPORT ERROR:", e)
+from flask import Flask, render_template, request
 from ultralytics import YOLO
 from werkzeug.utils import secure_filename
 import os
 
-# ==========================================
 # RAG Helper
-# ==========================================
-
 from damage_rag_helper import get_damage_repair_details
 
-# ==========================================
-# Flask App
-# ==========================================
-
 app = Flask(__name__)
-try:
-    CORS(app)
-except:
-    pass
 
-# ==========================================
+# --------------------------------------------------
 # Configuration
-# ==========================================
+# --------------------------------------------------
 
 UPLOAD_FOLDER = "static/uploads"
 ALLOWED_EXTENSIONS = {"jpg", "jpeg", "png"}
@@ -34,17 +19,17 @@ app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-# ==========================================
+# --------------------------------------------------
 # Load YOLO Model
-# ==========================================
+# --------------------------------------------------
 
-MODEL_PATH = "best.pt"
+MODEL_PATH = r"C:/Users/ACER/Downloads/image-classifier-main (1)/image-classifier-main/best.pt"
 
 model = YOLO(MODEL_PATH)
 
-# ==========================================
+# --------------------------------------------------
 # Helper Function
-# ==========================================
+# --------------------------------------------------
 
 def allowed_file(filename):
 
@@ -54,21 +39,9 @@ def allowed_file(filename):
         in ALLOWED_EXTENSIONS
     )
 
-# ==========================================
-# Health Check
-# ==========================================
-
-@app.route("/health")
-def health():
-
-    return jsonify({
-        "status": "running",
-        "service": "Vehicle Doctor AI"
-    })
-
-# ==========================================
+# --------------------------------------------------
 # Home Route
-# ==========================================
+# --------------------------------------------------
 
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -113,12 +86,18 @@ def index():
 
             try:
 
+                # -----------------------------------
+                # YOLO Prediction
+                # -----------------------------------
+
                 results = model(image_path)
 
                 result = results[0]
 
                 detected_labels = []
+
                 confidences = []
+
                 rag_outputs = []
 
                 if len(result.boxes) > 0:
@@ -127,9 +106,9 @@ def index():
 
                         cls_id = int(box.cls[0])
 
-                        confidence = (
-                            float(box.conf[0]) * 100
-                        )
+                        confidence = float(
+                            box.conf[0]
+                        ) * 100
 
                         label = model.names[cls_id]
 
@@ -140,6 +119,10 @@ def index():
                         confidences.append(
                             f"{confidence:.2f}%"
                         )
+
+                        # -------------------------
+                        # RAG Retrieval
+                        # -------------------------
 
                         rag_result = (
                             get_damage_repair_details(
@@ -183,141 +166,29 @@ def index():
 
                 repair_details = str(e)
 
-    return render_template(
-        "index.html",
-        prediction=prediction_text,
-        confidence=confidence_text,
-        repair=repair_details,
-        image_url="/" + image_url.replace("\\", "/")
-        if image_url else None
-    )
-
-# ==========================================
-# API Endpoint for Vercel Frontend
-# ==========================================
-
-@app.route("/predict-image", methods=["POST"])
-def predict_image():
-
-    if "imagefile" not in request.files:
-
-        return jsonify({
-            "error": "No file uploaded"
-        }), 400
-
-    imagefile = request.files["imagefile"]
-
-    if imagefile.filename == "":
-
-        return jsonify({
-            "error": "No file selected"
-        }), 400
-
-    if not allowed_file(
-        imagefile.filename
-    ):
-
-        return jsonify({
-            "error": "Invalid file type"
-        }), 400
-
-    filename = secure_filename(
-        imagefile.filename
-    )
-
-    image_path = os.path.join(
-        app.config["UPLOAD_FOLDER"],
-        filename
-    )
-
-    imagefile.save(image_path)
-
-    try:
-
-        results = model(image_path)
-
-        result = results[0]
-
-        predictions = []
-
-        if len(result.boxes) > 0:
-
-            for box in result.boxes:
-
-                cls_id = int(box.cls[0])
-
-                confidence = (
-                    float(box.conf[0]) * 100
-                )
-
-                label = model.names[
-                    cls_id
-                ]
-
-                repair = (
-                    get_damage_repair_details(
-                        label
-                    )
-                )
-
-                predictions.append({
-                    "label": label,
-                    "confidence": round(
-                        confidence,
-                        2
-                    ),
-                    "repair": repair
-                })
-
         else:
 
-            predictions.append({
-                "label": "No damage detected",
-                "confidence": 0,
-                "repair": "No repair recommendation available."
-            })
+            prediction_text = (
+                "Invalid file type."
+            )
 
-        return jsonify(predictions)
+    return render_template(
+    "index.html",
+    prediction=prediction_text,
+    confidence=confidence_text,
+    repair=repair_details,
+    image_url="/" + image_url.replace("\\", "/")
+    if image_url else None
+)
 
-    except Exception as e:
-
-        return jsonify({
-            "error": str(e)
-        }), 500
-
-# ==========================================
-# Error Handlers
-# ==========================================
-
-@app.errorhandler(404)
-def not_found(error):
-
-    return jsonify({
-        "error": "Route not found"
-    }), 404
-
-@app.errorhandler(500)
-def server_error(error):
-
-    return jsonify({
-        "error": "Internal Server Error"
-    }), 500
-
-# ==========================================
-# Run App
-# ==========================================
+# --------------------------------------------------
+# Run Application
+# --------------------------------------------------
 
 if __name__ == "__main__":
 
-    port = int(
-        os.environ.get(
-            "PORT",
-            4000
-        )
-    )
-
     app.run(
         host="0.0.0.0",
-        port=port,
+        port=4000,
         debug=True
     )
