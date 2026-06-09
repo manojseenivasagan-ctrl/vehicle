@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register Page</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+        }
+        header {
+            background-color: #2c3e50;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 40px;
+        }
+        header h1 { margin: 0; font-size: 22px; }
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+            font-weight: 500;
+        }
+        nav a:hover { color: #1abc9c; }
+
+        .welcome {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 22px;
+            color: #2c3e50;
+        }
+        .slogan {
+            text-align: center;
+            font-size: 20px;
+            color: #34495e;
+            margin-bottom: 20px;
+        }
+        .container {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            padding: 20px;
+        }
+        .box {
+            background-color: rgb(211, 188, 134);
+            border-radius: 10px;
+            width: 300px;
+            text-align: center;
+            padding: 30px;
+            margin: 20px;
+        }
+        .box img {
+            width: 150px;
+            height: 150px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+        }
+        .btn-link {
+            background-color: #4CAF50;
+            padding: 10px 15px;
+            color: white;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            text-decoration: none;
+        }
+        table {
+            width: 95%;
+            margin: auto;
+            border-collapse: collapse;
+        }
+        th, td { padding: 10px; border: 1px solid #ddd; text-align: center; }
+        th { background-color: #16a085; color: white; }
+        tr:nth-child(even) { background: #f9f9f9; }
+        tr:hover { background: #e8f8f5; }
+    </style>
+</head>
+<body>
+
+<header>
+  <div style="display:flex; align-items:center; gap:10px;">
+    <img src="/logo1.png" alt="Book Mechanic Logo" style="height:50px;">
+    <h1>Book Mechanic</h1>
+  </div>
+  <nav>
+    <a href="/shopin.html">Home</a>
+    <a href="/shopregister.html">Register</a>
+    <a href="/serviceindex.html">Services List</a>
+    <a href="#" id="logoutBtn">Logout</a>
+  </nav>
+</header>
+
+<div class="welcome" id="welcomeText">Welcome, Guest!</div>
+<div class="slogan">
+    <p>Connect with us. Get Your Customer Instantly!</p>
+</div>
+
+<div class="container">
+    <div class="box">
+        <img src="/customer.jpg" alt="Customer Image">
+        <h2>Choose Customer</h2>
+        <a href="/customerslist.html" class="btn-link">Select Customer</a>
+    </div>
+    <div class="box">
+        <img src="/mechanic.png" alt="Customer Details">
+        <h2>Customer Details</h2>
+        <a href="/customerdetails.html" class="btn-link">View Details</a>
+    </div>
+    <div class="box">
+        <img src="/history.jpg" alt="History">
+        <h2>Service History</h2>
+        <a href="/servicehistory.html" class="btn-link">View History</a>
+    </div>
+</div>
+
+<div class="table-container">
+    <h2 style="text-align:center;color:#16a085;">Service Requests for Your Shop</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th><th>Email</th><th>Mobile</th><th>Address</th><th>City</th>
+                <th>Vehicle</th><th>Service Details</th><th>Date</th><th>Time</th>
+                <th>Shop Name</th><th>Shop Email</th><th>Mechanic Name</th><th>Mechanic Mobile</th>
+            </tr>
+        </thead>
+        <tbody id="shopBookingTable">
+            <tr><td colspan="13">Loading...</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<script>
+window.onload = function(){
+    const shopName = localStorage.getItem("shopName") || "Shop";
+    const shopEmail = localStorage.getItem("shopEmail");
+
+    document.getElementById("welcomeText").textContent = `Welcome, ${shopName}!`;
+
+    if(!shopEmail){
+        alert("Please log in first!");
+        window.location.href = "/loginindex.html";
+        return;
+    }
+
+    fetch(`/shopConfirmBooking/list/${shopEmail}`)
+    .then(res => res.json())
+    .then(data => {
+        const tbody = document.getElementById("shopBookingTable");
+        tbody.innerHTML = "";
+        
+        if(data.length === 0){
+            tbody.innerHTML = "<tr><td colspan='13'>No service requests found.</td></tr>";
+            return;
+        }
+        
+        data.forEach(b => {
+            tbody.innerHTML += `
+                <tr>
+                    <td>${b.name}</td>
+                    <td>${b.emailId}</td>
+                    <td>${b.mobileno}</td>
+                    <td>${b.address}</td>
+                    <td>${b.city}</td>
+                    <td>${b.vehicleName}</td>
+                    <td>${b.servicedetails}</td>
+                    <td>${b.servicedate}</td>
+                    <td>${b.servicetime}</td>
+                    <td>${b.shopname}</td>
+                    <td>${b.shopemailId}</td>
+                    <td>${b.mechanicname}</td>
+                    <td>${b.mechanicmobileno}</td>
+                </tr>`;
+        });
+    })
+    .catch(error => console.error("Error:", error));
+
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+        localStorage.clear();
+        window.location.href = "/loginindex.html";
+    });
+};
+
+function goToFeedback(mechanicname){
+    localStorage.setItem("feedbackMechanicName", mechanicname);
+    window.location.href = "/feedback.html";
+}
+</script>
+
+</body>
+</html>

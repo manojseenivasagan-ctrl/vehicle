@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "http://127.0.0.1:5500")
+//@CrossOrigin(origins = "http://127.0.0.1:5500")
 public class MechanicController {
 
     @Autowired
@@ -35,7 +35,7 @@ public class MechanicController {
         return "Congratulations " + name + "! You Created New Shop Profile Successfully";
     }
 
-    // ✅ New API to return shop email from shop name
+    // New API to return shop email from shop name
     @GetMapping("/Mechanic/email/{name}")
     public String getShopEmail(@PathVariable String name) {
         mechanic m = mechanicService.getByName(name);

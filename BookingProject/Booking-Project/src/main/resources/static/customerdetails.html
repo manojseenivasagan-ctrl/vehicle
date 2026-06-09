@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Mechanic Details - Book Mechanic</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f4f6f9;
+    }
+    header {
+      background-color: #2c3e50;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 40px;
+    }
+    header h1 { margin: 0; font-size: 22px; }
+    nav a {
+      color: white;
+      text-decoration: none;
+      margin-left: 20px;
+      font-weight: 500;
+    }
+    nav a:hover { color: #1abc9c; }
+    #welcome { text-align: center; margin: 20px 0; font-size: 22px; color: #2c3e50; }
+
+    #logoutBtn {
+      display: block;
+      margin: 0 auto 20px auto;
+      padding: 10px 20px;
+      background-color: #e74c3c;
+      color: white;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .table-container {
+      max-width: 95%;
+      margin: 20px auto 50px auto;
+      background-color: white;
+      border-radius: 10px;
+      padding: 20px;
+      overflow-x: auto;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: center;
+    }
+    th, td { padding: 12px; border: 1px solid #ddd; }
+    th { background-color: #16a085; color: white; }
+    tr:nth-child(even) td { background-color: #f9f9f9; }
+    tr:hover td { background-color: #e8f8f5; }
+
+    #searchBar {
+      width: 98%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div style="display:flex; align-items:center; gap:10px;">
+    <img src="/logo1.png" alt="Book Mechanic Logo" style="height:50px;">
+    <h1>Book Mechanic</h1>
+  </div>
+  <nav>
+    <a href="/shopin.html">Home</a>
+    <!-- <a href="shopregister.html">Register</a>  -->
+    <a href="/shopservice.html">Services List</a>
+    <!-- <a href="shoplogin.html">Login</a>  -->
+    <a href="/feedback-history.html">Feedback History</a>
+  </nav>
+</header>
+
+<div id="welcome">Welcome, Guest!</div>
+<button id="logoutBtn">Logout</button>
+
+<div class="table-container">
+  <h2 style="text-align:center; color:#16a085;">Your Mechanic Bookings</h2>
+  <input type="text" id="searchBar" onkeyup="searchBookings()" placeholder="Search bookings...">
+  <table>
+    <thead>
+      <tr>
+        <th>Customer Name</th>
+        <th>Email</th>
+        <th>Mobile</th>
+        <th>Address</th>
+        <th>City</th>
+        <th>Vehicle</th>
+        <th>Service Details</th>
+        <th>Date</th>
+        <th>Time</th>
+        <th>Shop Name</th>
+        <th>Mechanic Name</th>
+        <th>Mechanic Mobile</th>
+      </tr>
+    </thead>
+    <tbody id="shopBookingTable">
+      <tr><td colspan="12" id="loading">Loading bookings...</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<script>
+window.onload = function() {
+  const shopName = localStorage.getItem("shopName");
+  const shopEmail = localStorage.getItem("shopEmail");
+
+  if (!shopEmail) {
+    alert("Please log in first!");
+    window.location.href = "/loginindex.html";
+    return;
+  }
+
+  document.getElementById("welcome").textContent = `Welcome, ${shopName || "Shop"}!`;
+
+  fetch(`/shopConfirmBooking/list/${shopEmail}`)
+    .then(response => {
+      if (!response.ok) throw new Error("Failed to fetch");
+      return response.json();
+    })
+    .then(bookings => {
+      const tbody = document.getElementById("/shopBookingTable");
+      tbody.innerHTML = "";
+
+      if (!bookings.length) {
+        tbody.innerHTML = `<tr><td colspan="12" style="color:red;">No bookings found.</td></tr>`;
+        return;
+      }
+
+      bookings.forEach(b => {
+        tbody.innerHTML += `
+          <tr>
+            <td>${b.name}</td>
+            <td>${b.emailId}</td>
+            <td>${b.mobileno}</td>
+            <td>${b.address}</td>
+            <td>${b.city}</td>
+            <td>${b.vehicleName}</td>
+            <td>${b.servicedetails}</td>
+            <td>${b.servicedate}</td>
+            <td>${b.servicetime}</td>
+            <td>${b.shopname}</td>
+            <td>${b.mechanicname}</td>
+            <td>${b.mechanicmobileno}</td>
+          </tr>`;
+      });
+    })
+    .catch(error => console.error("Error fetching bookings:", error));
+
+  document.getElementById("logoutBtn").addEventListener("click", () => {
+    localStorage.clear();
+    window.location.href = "/shoplogin.html";
+  });
+};
+
+function searchBookings() {
+  const input = document.getElementById("searchBar").value.toLowerCase();
+  const rows = document.querySelectorAll("#shopBookingTable tr");
+
+  rows.forEach(row => {
+    row.style.display = row.textContent.toLowerCase().includes(input) ? "" : "none";
+  });
+}
+</script>
+
+</body>
+</html>

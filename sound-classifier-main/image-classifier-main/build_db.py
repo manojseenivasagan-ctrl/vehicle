@@ -44,7 +44,7 @@ embeddings = CohereEmbeddings(
 vectordb = Chroma.from_documents(
     documents=documents,
     embedding=embeddings,
-    persist_directory="vehicle_db"
+    persist_directory="vehicle_db" # <-- This right here!
 )
 
 print("Vehicle DB Created Successfully")

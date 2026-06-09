@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Accident Details Update</title>
+
+<style>
+body{
+    background:#f4f6f9;
+    font-family:Segoe UI,Tahoma,Geneva,Verdana,sans-serif;
+    margin:0;
+    padding:0;
+}
+
+header{
+    background:#2c3e50;
+    color:white;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:15px 40px;
+}
+
+nav a{
+    color:white;
+    text-decoration:none;
+    margin-left:20px;
+}
+
+nav a:hover{
+    color:#1abc9c;
+}
+
+.container{
+    max-width:500px;
+    margin:50px auto;
+    background:#e5d4c4;
+    padding:40px;
+    border-radius:12px;
+    box-shadow:0 8px 20px rgba(0,0,0,0.1);
+}
+
+h2{
+    text-align:center;
+    color:#2c3e50;
+}
+
+form{
+    display:flex;
+    flex-direction:column;
+}
+
+label{
+    margin-top:12px;
+    font-weight:600;
+}
+
+input{
+    padding:12px;
+    border-radius:6px;
+    border:1px solid #ccc;
+    margin-top:5px;
+}
+
+button{
+    margin-top:25px;
+    padding:12px;
+    background:#1abc9c;
+    color:white;
+    border:none;
+    border-radius:6px;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#16a085;
+}
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<div style="display:flex;align-items:center;gap:10px;">
+<img src="/logo_2.png"
+     alt="Vehicle Doctor"
+     style="height:50px;">
+
+<h1>Vehicle Doctor</h1>
+</div>
+
+<nav>
+<a href="/index.html">Home</a>
+<a href="/serviceindex.html">Services List</a>
+</nav>
+
+</header>
+
+<div class="container">
+
+<h2>Accident Details</h2>
+
+<form id="bookingForm">
+
+<label>Vehicle Register Number</label>
+
+<input
+type="text"
+id="registernum"
+name="registernum"
+readonly
+required>
+
+<label>Insurance Details</label>
+
+<input
+type="text"
+id="Insurance"
+name="Insurance"
+required>
+
+<label>FIR Details</label>
+
+<input
+type="text"
+id="FIR"
+name="FIR"
+required>
+
+<label>Accident Location</label>
+
+<input
+type="text"
+id="location"
+name="location"
+required>
+
+<label>Accident Date</label>
+
+<input
+type="date"
+id="accidentdate"
+name="accidentdate"
+required>
+
+<label>Accident Time</label>
+
+<input
+type="time"
+id="accidenttime"
+name="accidenttime"
+required>
+
+<button type="submit">
+Update Accident Details
+</button>
+
+</form>
+
+</div>
+
+<script>
+
+window.onload=function(){
+
+    const regNum=
+    localStorage.getItem("customerregisternum");
+
+    if(!regNum){
+
+        alert(
+        "Vehicle Number Missing. Login Again."
+        );
+
+        window.location.href="/log.html";
+
+        return;
+    }
+
+    document.getElementById(
+        "registernum"
+    ).value=regNum;
+};
+
+document
+.getElementById("bookingForm")
+.addEventListener(
+"submit",
+async function(event){
+
+event.preventDefault();
+
+const formData =
+new URLSearchParams(
+new FormData(this)
+);
+
+try{
+
+const response =
+await fetch(
+"/Vehicle/Accident/Register",
+{
+method:"POST",
+headers:{
+"Content-Type":
+"application/x-www-form-urlencoded"
+},
+body:formData
+}
+);
+
+if(response.ok){
+
+alert(
+"Accident Details Saved Successfully"
+);
+
+window.location.href=
+"/acchis.html";
+
+}
+else{
+
+alert(
+"Failed To Save Accident Details"
+);
+
+}
+
+}
+catch(error){
+
+console.error(error);
+
+alert(
+"Server Error. Check Backend."
+);
+
+}
+
+});
+
+</script>
+
+</body>
+</html>

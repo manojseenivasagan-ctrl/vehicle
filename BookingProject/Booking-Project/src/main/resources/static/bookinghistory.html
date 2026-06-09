@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Feedback History</title>
+  <style>
+    body { font-family: Arial,sans-serif; margin:0; background:#f4f6f9; }
+    header { background:#2c3e50; color:white; padding:15px 40px; display:flex; justify-content:space-between; align-items:center; }
+    nav a { color:white; text-decoration:none; margin-left:20px; }
+    nav a:hover { color:#1abc9c; }
+    #logoutBtn { padding:5px 10px; background:#e74c3c; border:none; color:white; border-radius:5px; cursor:pointer; }
+    .table-container { max-width:95%; margin:20px auto; background:white; border-radius:10px; padding:20px; overflow-x:auto; box-shadow:0 4px 10px rgba(0,0,0,0.1); }
+    table { width:100%; border-collapse:collapse; text-align:center; }
+    th, td { padding:12px; border:1px solid #ddd; }
+    th { background:#16a085; color:white; }
+    tr:nth-child(even) td { background:#f9f9f9; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div style="display:flex; align-items:center; gap:10px;">
+    <img src="/logo1.png" alt="Book Mechanic Logo" style="height:50px;">
+    <h1>Book Mechanic</h1>
+  </div>
+  <nav>
+    <a href="/cus_index.html">Home</a>
+    <a href="/customerservice.html">Services List</a>
+    <!-- <a href="login.html">Login</a> -->
+    <a href="/bookinghistory.html">Feedback History</a>
+  </nav>
+</header>
+
+<div class="table-container">
+  <table>
+    <thead>
+      <tr>
+        <th>Customer Name</th>
+        <th>Email</th>
+        <th>Mechanic Name</th>
+        <th>Mechanic Mobile</th>
+        <th>Service Details</th>
+        <th>Date</th>
+        <th>Time</th>
+        <th>Shop Name</th>
+        <th>Vehicle</th>
+        <th>Rating</th>
+        <th>Feedback</th>
+      </tr>
+    </thead>
+    <tbody id="feedbackHistory">
+      <tr><td colspan="11" style="text-align:center;">Loading feedback history...</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<script>
+window.onload = function() {
+  const customerEmail = localStorage.getItem("customerEmail");
+  if (!customerEmail) {
+    alert("Please log in first!");
+    window.location.href = "/login.html";
+    return;
+  }
+
+  fetch(`/feedback/list/${customerEmail}`)
+    .then(res => res.json())
+    .then(feedbacks => {
+      const tbody = document.getElementById("feedbackHistory");
+      tbody.innerHTML = "";
+
+      if (feedbacks.length === 0) {
+        tbody.innerHTML = "<tr><td colspan='11'>No feedback submitted yet.</td></tr>";
+        return;
+      }
+
+      feedbacks.forEach(f => {
+        tbody.innerHTML += `
+          <tr>
+            <td>${f.customerName}</td>
+            <td>${f.customerEmail}</td>
+            <td>${f.mechanicName}</td>
+            <td>${f.mobile}</td>
+            <td>${f.serviceDetails}</td>
+            <td>${f.serviceDate}</td>
+            <td>${f.serviceTime}</td>
+            <td>${f.shopName}</td>
+            <td>${f.vehicle}</td>
+            <td>${f.rating}</td>
+            <td>${f.feedback}</td>
+          </tr>`;
+      });
+    });
+
+  document.getElementById("logoutBtn").addEventListener("click", () => {
+    localStorage.removeItem("customerName");
+    localStorage.removeItem("customerEmail");
+    window.location.href = "/login.html";
+  });
+};
+</script>
+
+</body>
+</html>
